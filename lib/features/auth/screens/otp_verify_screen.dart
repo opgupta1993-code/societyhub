@@ -95,7 +95,14 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
       // Success API data -> Home Screen
       context.go('/home');
     } else if (result.status == VerifyStatus.needsRegistration) {
-      // User not registered -> Registration Screen
+      // User not registered -> Show message & navigate to Registration Screen
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Your mobile number is not registered. Please create your account.'),
+          backgroundColor: AppColors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
       context.push('/register', extra: widget.phone);
     } else {
       setState(() => _error = result.message ?? 'Invalid OTP code');
