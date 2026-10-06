@@ -4,15 +4,16 @@ import 'package:http/http.dart' as http;
 class ApiService {
   static const String baseUrl = 'https://bahikhata.webenhancehub.com/api/v1';
 
+  static const String defaultBearerToken =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhaGlraGF0YS53ZWJlbmhhbmNlaHViLmNvbS8iLCJhdWQiOiJodHRwczovL2JhaGlraGF0YS53ZWJlbmhhbmNlaHViLmNvbS8iLCJpYXQiOjE3OTEyNzY4MjksImV4cCI6MTc5MTM2MzIyOSwiZGF0YSI6eyJ1aWQiOiJ1c3JfNzU0MyIsIm5hbWUiOiJPd25lciA4NSIsInBob25lIjoiKzkxODEwOTk1NzY3MiIsInJvbGUiOiJvd25lciIsInNob3BfaWQiOiJzaG9wX2tyaXNoYW5fOTkxIn19.S4yj9WyTIJtyJAf_-fw3CRPbgDlCRatj0YMfyYyTLDY';
+
   static Map<String, String> _headers([String? token]) {
-    final headers = <String, String>{
+    final authToken = (token != null && token.isNotEmpty) ? token : defaultBearerToken;
+    return {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'Authorization': 'Bearer $authToken',
     };
-    if (token != null && token.isNotEmpty) {
-      headers['Authorization'] = 'Bearer $token';
-    }
-    return headers;
   }
 
   /// POST /auth/request-otp

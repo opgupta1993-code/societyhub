@@ -7,6 +7,7 @@ class AuthState {
   final bool isAuthenticated;
   final UserModel? user;
   final String? token;
+  final String? latestOtp;
   final bool isLoading;
   final String? error;
   final String? infoMessage;
@@ -15,6 +16,7 @@ class AuthState {
     required this.isAuthenticated,
     this.user,
     this.token,
+    this.latestOtp,
     this.isLoading = false,
     this.error,
     this.infoMessage,
@@ -24,6 +26,7 @@ class AuthState {
     bool? isAuthenticated,
     UserModel? user,
     String? token,
+    String? latestOtp,
     bool? isLoading,
     String? error,
     String? infoMessage,
@@ -32,6 +35,7 @@ class AuthState {
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       user: user ?? this.user,
       token: token ?? this.token,
+      latestOtp: latestOtp ?? this.latestOtp,
       isLoading: isLoading ?? this.isLoading,
       error: error,
       infoMessage: infoMessage,
@@ -50,13 +54,14 @@ class AuthNotifier extends Notifier<AuthState> {
 
     final response = await ApiService.requestOtp(phone);
     if (response['success'] == true) {
-      final otpReceived = response['otp'];
+      final otpReceived = response['otp']?.toString();
       final msg = otpReceived != null
           ? 'OTP sent successfully! (Server OTP: $otpReceived)'
           : (response['message'] ?? 'OTP sent successfully!');
 
       state = state.copyWith(
         isLoading: false,
+        latestOtp: otpReceived ?? '5012',
         infoMessage: msg,
       );
       return true;
@@ -100,8 +105,8 @@ class AuthNotifier extends Notifier<AuthState> {
         isLoading: false,
       );
     } else {
-      // Fallback for offline or demo testing with 123456
-      if (otp == '123456') {
+      // Fallback for offline or demo testing with 5012 / 5582
+      if (otp == '5012' || otp == '5582' || otp == '123456') {
         state = AuthState(
           isAuthenticated: true,
           user: UserModel.dummyUser().copyWith(phone: phone),

@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/providers/auth_provider.dart';
 
-/// Screen 3: Verify OTP Screen (4-Digit OTP Verification)
+/// Screen 3: Verify OTP Screen (4-Digit OTP Verification + Live Server Auto-Fill)
 class OtpVerifyScreen extends ConsumerStatefulWidget {
   final String phone;
 
@@ -34,10 +34,17 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
     super.initState();
     _startTimer();
 
-    // Auto-fill default test OTP digits from server info or 5012 / 5582
+    // Auto-fill dynamic server OTP received from POST /auth/request-otp
+    final latestOtp = ref.read(authProvider).latestOtp;
     final info = ref.read(authProvider).infoMessage;
-    final match = RegExp(r'\d{4}').firstMatch(info ?? '');
-    final otpStr = match != null ? match.group(0)! : '5582';
+
+    String otpStr = '5012';
+    if (latestOtp != null && latestOtp.isNotEmpty) {
+      otpStr = latestOtp;
+    } else if (info != null) {
+      final match = RegExp(r'\d{4}').firstMatch(info);
+      if (match != null) otpStr = match.group(0)!;
+    }
 
     for (int i = 0; i < otpStr.length && i < 4; i++) {
       _controllers[i].text = otpStr[i];
@@ -174,8 +181,14 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                         ),
                       )
                     : TextButton(
-                        onPressed: () {
-                          ref.read(authProvider.notifier).requestOtp(widget.phone);
+                        onPressed: () async {
+                          await ref.read(authProvider.notifier).requestOtp(widget.phone);
+                          final newOtp = ref.read(authProvider).latestOtp;
+                          if (newOtp != null && newOtp.length >= 4) {
+                            for (int i = 0; i < 4; i++) {
+                              _controllers[i].text = newOtp[i];
+                            }
+                          }
                           _startTimer();
                         },
                         child: const Text(
