@@ -12,6 +12,7 @@ import '../../features/common/screens/profile_screen.dart';
 import '../../features/common/screens/feature_placeholder_screen.dart';
 import '../../features/resident/screens/tenant_home_screen.dart';
 import '../../features/resident/screens/pay_bill_screen.dart';
+import '../../features/resident/screens/rent_payments_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = ValueNotifier<bool>(false);
@@ -214,12 +215,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/rent',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'C2',
-          screenTitle: 'Rent Management',
-          category: 'C. Records & Sharing',
-          description: 'Monthly rent, pay online, mark paid, rental agreement',
-        ),
+        builder: (context, state) => const RentPaymentsScreen(), // C2 / Rent & Payments
       ),
       GoRoute(
         path: '/charges-breakup',
