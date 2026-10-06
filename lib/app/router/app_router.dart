@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/models/role_enum.dart';
 import '../../core/providers/auth_provider.dart';
+import '../../features/admin/screens/admin_owner_home_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/otp_verify_screen.dart';
@@ -73,7 +75,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/home',
-        builder: (context, state) => const TenantHomeScreen(), // A3 / Tenant Home
+        builder: (context, state) => Consumer(
+          builder: (context, ref, _) {
+            final authState = ref.watch(authProvider);
+            final user = authState.user;
+            final isOwnerOrAdmin = user?.activeRole == UserRole.admin || user?.isOwner == true;
+            if (isOwnerOrAdmin) {
+              return const AdminOwnerHomeScreen(); // Owner / Admin Dashboard
+            }
+            return const TenantHomeScreen(); // Tenant Home Dashboard
+          },
+        ),
       ),
       GoRoute(
         path: '/notifications',

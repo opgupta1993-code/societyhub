@@ -40,9 +40,28 @@ enum UserRole {
     required this.description,
   });
 
-  static UserRole fromCode(String code) {
+  static UserRole fromCode(String rawRole) {
+    final lower = rawRole.trim().toLowerCase();
+    if (lower == 'owner' || lower == 'admin' || lower == 'adm') {
+      return UserRole.admin;
+    }
+    if (lower == 'tenant' || lower == 'resident' || lower == 'res') {
+      return UserRole.resident;
+    }
+    if (lower == 'manager' || lower == 'mgr') {
+      return UserRole.manager;
+    }
+    if (lower == 'accountant' || lower == 'act') {
+      return UserRole.accountant;
+    }
+    if (lower == 'committee' || lower == 'cmt') {
+      return UserRole.committee;
+    }
+    if (lower == 'guard' || lower == 'grd') {
+      return UserRole.guard;
+    }
     return UserRole.values.firstWhere(
-      (r) => r.code == code || r.name == code,
+      (r) => r.code.toLowerCase() == lower || r.name.toLowerCase() == lower,
       orElse: () => UserRole.resident,
     );
   }
