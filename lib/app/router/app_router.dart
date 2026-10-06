@@ -13,6 +13,7 @@ import '../../features/common/screens/feature_placeholder_screen.dart';
 import '../../features/resident/screens/tenant_home_screen.dart';
 import '../../features/resident/screens/pay_bill_screen.dart';
 import '../../features/resident/screens/rent_payments_screen.dart';
+import '../../features/resident/screens/documents_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = ValueNotifier<bool>(false);
@@ -168,12 +169,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/documents',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B11',
-          screenTitle: 'Document Library',
-          category: 'B. Resident',
-          description: 'Bylaws, meeting minutes, audit reports',
-        ),
+        builder: (context, state) => const DocumentsScreen(), // B11 / Agreement & Documents
       ),
       GoRoute(
         path: '/family',
