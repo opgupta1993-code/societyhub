@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary Palette
-  static const Color primary = Color(0xFF1E3A8A); // Deep Slate Navy
-  static const Color primaryLight = Color(0xFF3B82F6);
-  static const Color secondary = Color(0xFF0D9488); // Emerald Teal
-  static const Color accent = Color(0xFFF59E0B); // Warm Amber
+  static const primary = Color(0xFF0F5C4D);
+  static const primary2 = Color(0xFF1F8A72);
+  static const secondary = Color(0xFF1F8A72);
+  static const amber = Color(0xFFF2A93B);
+  static const red = Color(0xFFD9534F);
+  static const bg = Color(0xFFF7F4EC);
+  static const ink = Color(0xFF14231F);
+  static const mute = Color(0xFF6B7A74);
+  static const line = Color(0xFFE5E0D3);
+  static const tint = Color(0xFFE3F1EC);
 
   // Role Color Tags
-  static const Color roleResident = Color(0xFF2563EB); // Royal Blue
-  static const Color roleAdmin = Color(0xFF7C3AED);    // Purple
-  static const Color roleManager = Color(0xFFD97706);  // Amber
-  static const Color roleAccountant = Color(0xFF059669); // Emerald
-  static const Color roleCommittee = Color(0xFFDC2626); // Crimson
-  static const Color roleGuard = Color(0xFF4B5563);    // Slate Dark
+  static const Color roleResident = Color(0xFF1F8A72);
+  static const Color roleAdmin = Color(0xFF7C3AED);
+  static const Color roleManager = Color(0xFFD97706);
+  static const Color roleAccountant = Color(0xFF059669);
+  static const Color roleCommittee = Color(0xFFDC2626);
+  static const Color roleGuard = Color(0xFF4B5563);
 
-  // Neutral Colors
-  static const Color background = Color(0xFFF8FAFC);
+  // Deprecated helper aliases for compatibility
+  static const Color background = bg;
   static const Color surface = Colors.white;
-  static const Color border = Color(0xFFE2E8F0);
-  static const Color textPrimary = Color(0xFF0F172A);
-  static const Color textSecondary = Color(0xFF64748B);
-  static const Color error = Color(0xFFEF4444);
-  static const Color success = Color(0xFF10B981);
+  static const Color border = line;
+  static const Color textPrimary = ink;
+  static const Color textSecondary = mute;
+  static const Color error = red;
+  static const Color success = primary2;
 }

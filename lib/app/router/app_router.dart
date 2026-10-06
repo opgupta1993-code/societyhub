@@ -8,6 +8,7 @@ import '../../features/common/screens/home_dashboard_screen.dart';
 import '../../features/common/screens/notifications_screen.dart';
 import '../../features/common/screens/profile_screen.dart';
 import '../../features/common/screens/feature_placeholder_screen.dart';
+import '../../features/resident/screens/pay_bill_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -31,7 +32,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // A. Common Screens
       GoRoute(
         path: '/login',
-        builder: (context, state) => const LoginScreen(), // A1
+        builder: (context, state) => const LoginScreen(), // A1 / Screen 1
       ),
       GoRoute(
         path: '/register',
@@ -53,12 +54,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // B. Resident Modules (B1 - B14)
       GoRoute(
         path: '/dues',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B1',
-          screenTitle: 'My Accounts / Dues',
-          category: 'B. Resident',
-          description: 'Bill breakup, pay via UPI, Card, Net banking',
-        ),
+        builder: (context, state) => const PayBillScreen(), // B1 / Screen 3
       ),
       GoRoute(
         path: '/complaints',
@@ -223,7 +219,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           screenId: 'D2',
           screenTitle: 'HR: Users List',
           category: 'D. Admin',
-          description: 'Search, filter users by role, view flat mapping',
+          description: 'Search, filter users by role',
         ),
       ),
       GoRoute(

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin – Screen Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--page:#e9e4d8;--bg:#f7f4ec;--card:#fff;--ink:#14231f;--mute:#6b7a74;--line:#e5e0d3;--pri:#0f5c4d;--pri2:#1f8a72;--on:#fff;--amb:#f2a93b;--red:#d9534f;--tint:#e3f1ec}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:#0b1210;--bg:#101b18;--card:#172622;--ink:#eaf2ee;--mute:#8fa39b;--line:#25382f;--pri:#2fb391;--pri2:#1f8a72;--on:#06201a;--tint:#1d3a31}}
+:root[data-theme="dark"]{--page:#0b1210;--bg:#101b18;--card:#172622;--ink:#eaf2ee;--mute:#8fa39b;--line:#25382f;--pri:#2fb391;--pri2:#1f8a72;--on:#06201a;--tint:#1d3a31}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before,*:after{box-sizing:inherit}
+body{margin:0;background:var(--page);color:var(--ink);font:14px/1.45 "Plus Jakarta Sans","Segoe UI",system-ui,Arial,sans-serif;padding:28px 16px 70px}
+.w{max-width:1240px;margin:0 auto}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.5px}.s{color:var(--mute);margin:0 0 18px}
+.ds{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
+.sw{width:84px;border-radius:12px;overflow:hidden;background:var(--card);font-size:11px;color:var(--mute)}.sw b{display:block;height:44px}.sw span{display:block;padding:4px 8px}
+.row{display:flex;flex-wrap:wrap;gap:28px}
+.f{width:288px}.cap{text-align:center;color:var(--mute);margin-top:10px;font-weight:600;font-size:13px}
+.ph{height:590px;background:var(--bg);border:9px solid #111;border-radius:40px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.sb{display:flex;justify-content:space-between;padding:8px 20px 2px;font-size:11px;font-weight:700}
+.in{padding:10px 16px;display:flex;flex-direction:column;gap:12px;flex:1;overflow:hidden}
+.nav{display:flex;justify-content:space-around;padding:8px 6px 12px;background:var(--card);border-top:1px solid var(--line);font-size:10px;color:var(--mute);font-weight:600}
+.nav span{text-align:center}.nav span b{display:block;font-size:17px;font-weight:400}.nav .on{color:var(--pri)}
+.card{background:var(--card);border-radius:18px;padding:14px;box-shadow:0 1px 0 var(--line)}
+.hero{background:linear-gradient(140deg,var(--pri),var(--pri2));color:#fff;border-radius:20px;padding:16px}
+.hero small{opacity:.8}.hero h3{font-size:30px;margin:2px 0 12px;letter-spacing:-1px}
+.btn{display:block;text-align:center;background:var(--pri);color:var(--on);border-radius:14px;padding:12px;font-weight:700}
+.btn.w{background:#fff;color:#0f5c4d;padding:10px}.btn.o{background:none;border:1.5px solid var(--pri);color:var(--pri)}
+.h{font-size:19px;font-weight:800;letter-spacing:-.4px;display:flex;justify-content:space-between;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.ic{text-align:center;font-size:10px;font-weight:600;color:var(--mute)}.ic b{display:flex;width:100%;aspect-ratio:1;border-radius:14px;background:var(--tint);align-items:center;justify-content:center;font-size:19px;margin-bottom:4px}
+.chip{display:inline-block;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;background:var(--tint);color:var(--pri)}
+.chip.a{background:#fdf0d8;color:#a8690a}.chip.r{background:#fbe3e2;color:var(--red)}
+.row2{display:flex;justify-content:space-between;align-items:center;gap:8px}.mt{color:var(--mute);font-size:12px}
+.tabs{display:flex;gap:6px}.tabs span{padding:6px 14px;border-radius:20px;background:var(--card);font-weight:600;font-size:12px;color:var(--mute)}.tabs .on{background:var(--pri);color:var(--on)}
+.ln{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line)}.ln:last-child{border:0}
+.qr{width:128px;height:128px;margin:8px auto;border:8px solid #fff;background:repeating-conic-gradient(#14231f 0 25%,#fff 0 50%) 0 0/16px 16px;border-radius:6px;outline:1px solid var(--line)}
+.im{height:70px;border-radius:14px;display:flex;align-items:flex-end;padding:8px;color:#fff;font-weight:700;font-size:12px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--tint);color:var(--pri);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-radius:24px 24px 0 0;padding:14px 16px 20px;box-shadow:0 -10px 30px rgba(0,0,0,.25);display:flex;flex-direction:column;gap:10px}
+.dim{position:absolute;inset:0;background:rgba(0,0,0,.35)}
+.tg{width:38px;height:22px;border-radius:12px;background:var(--line);position:relative;flex:none}.tg:after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff}.tg.on{background:var(--pri)}.tg.on:after{left:19px}
+.fld{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--mute)}
+.pg{height:6px;background:var(--line);border-radius:4px}.pg i{display:block;height:100%;border-radius:4px;background:var(--pri)}
+.k2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.k2 .card{padding:10px}.k2 b{font-size:20px;display:block;letter-spacing:-.5px}
+</style></head><body><div class="w"><h1>Admin · Screen Design</h1><p class="s">Society Admin ke liye: dashboard, HR module (role dena aur hatana), permissions, collections, complaints aur audit log · same SocietyHub style</p><div class="row"><div class="f"><div class="ph"><div class="sb"><span>9:41</span><span>● ● ▮</span></div><div class="in"><div class="row2"><div><div class="mt">Demo Housing Society</div><div class="h">Admin</div></div><div class="av">🔔</div></div>
+<div class="hero"><small>Collected this month</small><h3>₹8.2L</h3><div class="pg" style="background:rgba(255,255,255,.3)"><i style="width:85%;background:#fff"></i></div><small>85% of ₹9.6L target</small></div>
+<div class="k2"><div class="card"><div class="mt">Pending dues</div><b>₹1.4L</b></div><div class="card"><div class="mt">Open complaints</div><b>12</b></div><div class="card"><div class="mt">Visitors today</div><b>47</b></div><div class="card"><div class="mt">Active users</div><b>238</b></div></div>
+<div class="card"><div class="row2"><b>Needs attention</b><span class="chip r">3</span></div><div class="mt">Lift complaint open 3 days · 18 defaulters</div></div></div><div class="nav"><span class="on"><b>⌂</b>Home</span><span><b>☺</b>HR</span><span><b>₹</b>Billing</span><span><b>▤</b>Reports</span><span><b>⚙</b>More</span></div></div><div class="cap">Admin dashboard</div></div><div class="f"><div class="ph"><div class="sb"><span>9:41</span><span>● ● ▮</span></div><div class="in"><div class="h">HR · Users <span class="chip">+ Add</span></div><div class="fld">🔍 Search name or flat</div><div class="tabs"><span class="on">All</span><span>Managers</span><span>Guards</span></div><div class="card row2"><div class="row2"><div class="av">R</div><div><b>Rahul S.</b><div class="mt">B-402 · Tenant</div></div></div><span class="chip ">Resident</span></div><div class="card row2"><div class="row2"><div class="av">A</div><div><b>Anita M.</b><div class="mt">A-101 · Owner</div></div></div><span class="chip a">Manager</span></div><div class="card row2"><div class="row2"><div class="av">S</div><div><b>Sunil K.</b><div class="mt">Office</div></div></div><span class="chip a">Accountant</span></div><div class="card row2"><div class="row2"><div class="av">R</div><div><b>Ramesh</b><div class="mt">Main gate</div></div></div><span class="chip a">Guard</span></div><div class="card row2"><div class="row2"><div class="av">V</div><div><b>Vikas K.</b><div class="mt">C-210 · Owner</div></div></div><span class="chip ">Resident</span></div></div><div class="nav"><span><b>⌂</b>Home</span><span class="on"><b>☺</b>HR</span><span><b>₹</b>Billing</span><span><b>▤</b>Reports</span><span><b>⚙</b>More</span></div></div><div class="cap">HR · Users</div></div><div class="f"><div class="ph"><div class="sb"><span>9:41</span><span>● ● ▮</span></div><div class="in"><div class="h">‹ Assign role</div>
+<div class="card row2"><div class="row2"><div class="av">R</div><div><b>Rahul S.</b><div class="mt">B-402 · Tenant</div></div></div><span class="chip">Resident</span></div>
+<div class="card row2" style="border:2px solid var(--pri)"><span><b>Manager</b><div class="mt">Complaints, notices, bookings</div></span><span class="chip">✓</span></div>
+<div class="card row2"><span><b>Accountant</b><div class="mt">Bills, expenses, reports</div></span></div>
+<div class="card row2"><span><b>Committee</b><div class="mt">Polls, meetings</div></span></div>
+<div class="card row2"><span><b>Guard</b><div class="mt">Gate and visitors</div></span></div>
+<div class="btn" style="margin-top:auto">Save role</div><div class="btn o">Remove role</div></div><div class="nav"><span><b>⌂</b>Home</span><span class="on"><b>☺</b>HR</span><span><b>₹</b>Billing</span><span><b>▤</b>Reports</span><span><b>⚙</b>More</span></div></div><div class="cap">Assign role</div></div><div class="f"><div class="ph"><div class="sb"><span>9:41</span><span>● ● ▮</span></div><div class="in"><div class="h">Manager · permissions</div>
+<div class="card row2"><span>Assign complaints</span><span class="tg on"></span></div><div class="card row2"><span>Post notices</span><span class="tg on"></span></div>
+<div class="card row2"><span>Approve bookings</span><span class="tg on"></span></div><div class="card row2"><span>Create bills</span><span class="tg"></span></div>
+<div class="card row2"><span>View reports</span><span class="tg on"></span></div><div class="card row2"><span>Manage users (HR)</span><span class="tg"></span></div>
+<div class="btn" style="margin-top:auto">Save permissions</div></div><div class="nav"><span><b>⌂</b>Home</span><span><b>☺</b>HR</span><span><b>₹</b>Billing</span><span><b>▤</b>Reports</span><span class="on"><b>⚙</b>More</span></div></div><div class="cap">Roles & permissions</div></div><div class="f"><div class="ph"><div class="sb"><span>9:41</span><span>● ● ▮</span></div><div class="in"><div class="h">Collections · Oct</div><div class="tabs"><span class="on">Pending</span><span>Paid</span><span>Overdue</span></div>
+<div class="card"><div class="row2"><b>₹1.4L pending</b><span class="chip a">18 flats</span></div><div class="pg" style="margin-top:8px"><i style="width:85%"></i></div></div>
+<div class="card row2"><div><b>A-101</b><div class="mt">Anita M.</div></div><span><b>₹3,450</b><br><span class="chip a">Pending</span></span></div>
+<div class="card row2"><div><b>C-210</b><div class="mt">Vikas K.</div></div><span><b>₹6,900</b><br><span class="chip r">Overdue</span></span></div>
+<div class="btn o">Send reminders</div><div class="btn" style="margin-top:auto">Generate bills</div></div><div class="nav"><span><b>⌂</b>Home</span><span><b>☺</b>HR</span><span class="on"><b>₹</b>Billing</span><span><b>▤</b>Reports</span><span><b>⚙</b>More</span></div></div><div class="cap">Collections</div></div><div class="f"><div class="ph"><div class="sb"><span>9:41</span><span>● ● ▮</span></div><div class="in"><div class="h">Complaints</div>
+<div class="k2"><div class="card"><div class="mt">New</div><b>5</b></div><div class="card"><div class="mt">In progress</div><b>7</b></div></div>
+<div class="card"><div class="row2"><b>Lift not working</b><span class="chip r">High</span></div><div class="mt">B-402 · Open 3 days</div><div class="btn" style="margin-top:8px;padding:8px">Assign staff</div></div>
+<div class="card"><div class="row2"><b>Water leakage</b><span class="chip a">Medium</span></div><div class="mt">A-101 · Plumber assigned</div></div>
+<div class="card"><div class="row2"><b>Garbage pickup</b><span class="chip">Low</span></div><div class="mt">C-210 · Resolved today</div></div></div><div class="nav"><span class="on"><b>⌂</b>Home</span><span><b>☺</b>HR</span><span><b>₹</b>Billing</span><span><b>▤</b>Reports</span><span><b>⚙</b>More</span></div></div><div class="cap">Complaints overview</div></div><div class="f"><div class="ph"><div class="sb"><span>9:41</span><span>● ● ▮</span></div><div class="in"><div class="h">Audit log</div><div class="tabs"><span class="on">All</span><span>Roles</span><span>Payments</span></div>
+<div class="card"><b>Role changed</b><div class="mt">Admin made Anita M. a Manager</div><div class="mt">Today · 10:42 AM</div></div>
+<div class="card"><b>Role removed</b><div class="mt">Admin removed Guard role from Ramesh</div><div class="mt">Yesterday · 6:10 PM</div></div>
+<div class="card"><b>User removed</b><div class="mt">Admin removed Vikas K. from society</div><div class="mt">3 Oct · 2:30 PM</div></div>
+<div class="card"><b>Bills generated</b><div class="mt">Accountant · Oct 2026 · 240 flats</div><div class="mt">1 Oct · 9:00 AM</div></div>
+<div class="btn o" style="margin-top:auto">Export log</div></div><div class="nav"><span><b>⌂</b>Home</span><span><b>☺</b>HR</span><span><b>₹</b>Billing</span><span><b>▤</b>Reports</span><span class="on"><b>⚙</b>More</span></div></div><div class="cap">Audit log</div></div></div></div></body></html>

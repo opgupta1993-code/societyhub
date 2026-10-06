@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../app/theme/app_colors.dart';
-import '../../../core/providers/auth_provider.dart';
 
+import '../../../app/theme/app_colors.dart';
+import '../../../core/localization/app_localizations.dart';
+import '../../../core/providers/auth_provider.dart';
+import '../../../shared/widgets/app_card.dart';
+
+/// Screen 1: Login with mobile number + OTP (Live API + Multi-Language Supported).
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -12,235 +17,286 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _phoneController = TextEditingController(text: '8109957672');
-  final _otpController = TextEditingController(text: '5582');
+  final _phone = TextEditingController(text: '8109957672');
+  final _otp = TextEditingController(text: '5582');
   bool _otpSent = false;
+  String? _error;
 
   @override
   void dispose() {
-    _phoneController.dispose();
-    _otpController.dispose();
+    _phone.dispose();
+    _otp.dispose();
     super.dispose();
   }
 
   String _formattedPhone() {
-    final raw = _phoneController.text.trim();
+    final raw = _phone.text.trim();
     if (raw.startsWith('+')) return raw;
     return '+91$raw';
   }
 
-  Future<void> _handleSendOtp() async {
-    final phone = _formattedPhone();
-    if (_phoneController.text.trim().length >= 10) {
-      final success = await ref.read(authProvider.notifier).requestOtp(phone);
-      if (success) {
-        setState(() {
-          _otpSent = true;
-        });
-      }
+  Future<void> _sendOtp() async {
+    if (_phone.text.length < 10) {
+      setState(() => _error = 'Enter a 10-digit mobile number');
+      return;
+    }
+    setState(() => _error = null);
+
+    final success = await ref.read(authProvider.notifier).requestOtp(_formattedPhone());
+    if (success) {
+      setState(() {
+        _otpSent = true;
+      });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid 10-digit mobile number')),
-      );
+      final authError = ref.read(authProvider).error;
+      setState(() => _error = authError ?? 'Failed to send OTP');
     }
   }
 
-  void _handleVerifyOtp() {
-    final phone = _formattedPhone();
-    final otp = _otpController.text.trim();
-    ref.read(authProvider.notifier).loginWithOtp(phone, otp);
+  Future<void> _verify() async {
+    if (_otp.text.length != 4 && _otp.text.length != 6) {
+      setState(() => _error = 'Enter valid OTP verification code');
+      return;
+    }
+    setState(() => _error = null);
+
+    await ref.read(authProvider.notifier).loginWithOtp(
+          _formattedPhone(),
+          _otp.text.trim(),
+        );
+
+    final authState = ref.read(authProvider);
+    if (authState.isAuthenticated) {
+      if (mounted) context.go('/home');
+    } else if (authState.error != null) {
+      setState(() => _error = authState.error);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
     final authState = ref.watch(authProvider);
+    final currentLocale = ref.watch(localeProvider);
 
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 32),
-              // App Logo & Header
-              Center(
-                child: Column(
-                  children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.3),
-                            blurRadius: 15,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.apartment_rounded,
-                        size: 48,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'SocietyHub',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                          ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Complete Gated Community Management App',
-                      style: TextStyle(color: AppColors.textSecondary),
-                    ),
-                    const SizedBox(height: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.secondary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Text(
-                        'API Connected: https://bahikhata.webenhancehub.com/',
-                        style: TextStyle(fontSize: 11, color: AppColors.secondary, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 40),
-
-              // Title Section
-              Text(
-                _otpSent ? 'Enter OTP Verification' : 'Login to Your Account',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _otpSent
-                    ? (authState.infoMessage ?? 'OTP sent to ${_formattedPhone()}.')
-                    : 'Enter your registered mobile number to receive OTP',
-                style: TextStyle(
-                  color: authState.infoMessage != null ? AppColors.secondary : AppColors.textSecondary,
-                  fontSize: 14,
-                  fontWeight: authState.infoMessage != null ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              if (authState.error != null) ...[
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.error.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.error_outline, color: AppColors.error, size: 20),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          authState.error!,
-                          style: const TextStyle(color: AppColors.error, fontSize: 13),
+      body: LayoutBuilder(
+        builder: (context, box) => SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: box.maxHeight),
+            child: IntrinsicHeight(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [AppColors.primary, AppColors.primary2],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
-
-              if (!_otpSent) ...[
-                // Mobile Input Field (A1)
-                TextField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    labelText: 'Mobile Number',
-                    hintText: '8109957672',
-                    prefixIcon: Icon(Icons.phone_android_rounded),
-                    prefixText: '+91 ',
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: authState.isLoading ? null : _handleSendOtp,
-                  child: authState.isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('Request OTP'),
-                ),
-              ] else ...[
-                // OTP Input Field (A1)
-                TextField(
-                  controller: _otpController,
-                  keyboardType: TextInputType.number,
-                  maxLength: 6,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    letterSpacing: 8,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: 'Verification Code',
-                    hintText: '5582',
-                    prefixIcon: Icon(Icons.lock_clock_outlined),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () => setState(() => _otpSent = false),
-                      child: const Text('Change Number'),
+                      child: SafeArea(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text('🏛️', style: TextStyle(fontSize: 38)),
+                                // Language Switcher Button
+                                PopupMenuButton<String>(
+                                  icon: const Icon(Icons.language_rounded, color: Colors.white),
+                                  tooltip: context.tr('switch_language'),
+                                  onSelected: (String langCode) {
+                                    ref.read(localeProvider.notifier).changeLocale(langCode);
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: 'en',
+                                      child: Row(
+                                        children: [
+                                          if (currentLocale.languageCode == 'en')
+                                            const Icon(Icons.check, size: 18, color: AppColors.primary),
+                                          const SizedBox(width: 8),
+                                          const Text('English'),
+                                        ],
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 'hi',
+                                      child: Row(
+                                        children: [
+                                          if (currentLocale.languageCode == 'hi')
+                                            const Icon(Icons.check, size: 18, color: AppColors.primary),
+                                          const SizedBox(width: 8),
+                                          const Text('हिंदी (Hindi)'),
+                                        ],
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 'mr',
+                                      child: Row(
+                                        children: [
+                                          if (currentLocale.languageCode == 'mr')
+                                            const Icon(Icons.check, size: 18, color: AppColors.primary),
+                                          const SizedBox(width: 8),
+                                          const Text('मराठी (Marathi)'),
+                                        ],
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 'gu',
+                                      child: Row(
+                                        children: [
+                                          if (currentLocale.languageCode == 'gu')
+                                            const Icon(Icons.check, size: 18, color: AppColors.primary),
+                                          const SizedBox(width: 8),
+                                          const Text('ગુજરાતી (Gujarati)'),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'Your society,\nin your pocket',
+                              style: text.headlineMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                height: 1.1,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Bills, visitors and complaints in one app.',
+                              style: text.bodyMedium?.copyWith(
+                                  color: Colors.white.withValues(alpha: .85)),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    TextButton(
-                      onPressed: authState.isLoading ? null : _handleSendOtp,
-                      child: const Text('Resend OTP'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: SafeArea(
+                      top: false,
+                      child: AppCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _otpSent ? context.tr('enter_otp_sub') : context.tr('mobile_number'),
+                              style: text.bodySmall?.copyWith(color: AppColors.mute),
+                            ),
+                            const SizedBox(height: 6),
+                            if (!_otpSent)
+                              TextField(
+                                controller: _phone,
+                                keyboardType: TextInputType.phone,
+                                maxLength: 10,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
+                                style: text.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.w700),
+                                decoration: const InputDecoration(
+                                  prefixText: '+91  ',
+                                  counterText: '',
+                                  border: InputBorder.none,
+                                  hintText: '98765 43210',
+                                ),
+                              )
+                            else
+                              TextField(
+                                controller: _otp,
+                                keyboardType: TextInputType.number,
+                                maxLength: 6,
+                                autofocus: true,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
+                                style: text.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 8),
+                                decoration: const InputDecoration(
+                                  counterText: '',
+                                  border: InputBorder.none,
+                                  hintText: '••••••',
+                                ),
+                              ),
+                            if (authState.infoMessage != null && _otpSent)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Text(
+                                  authState.infoMessage!,
+                                  style: text.bodySmall?.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            if (_error != null)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Text(
+                                  _error!,
+                                  style: text.bodySmall?.copyWith(color: AppColors.red),
+                                ),
+                              ),
+                            const SizedBox(height: 8),
+                            FilledButton(
+                              onPressed: authState.isLoading ? null : (_otpSent ? _verify : _sendOtp),
+                              child: authState.isLoading
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                    )
+                                  : Text(_otpSent ? context.tr('verify_login') : context.tr('request_otp')),
+                            ),
+                            if (_otpSent)
+                              Center(
+                                child: TextButton(
+                                  onPressed: () => setState(() {
+                                    _otpSent = false;
+                                    _otp.clear();
+                                    _error = null;
+                                  }),
+                                  child: Text(context.tr('change_number')),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: authState.isLoading ? null : _handleVerifyOtp,
-                  child: authState.isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('Verify & Login'),
-                ),
-              ],
-
-              const SizedBox(height: 32),
-              const Divider(),
-              const SizedBox(height: 16),
-
-              // Register CTA (A2)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don't have an account? "),
-                  GestureDetector(
-                    onTap: () => context.push('/register'),
-                    child: const Text(
-                      'Register Now (A2)',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: GestureDetector(
+                      onTap: () => context.push('/register'),
+                      child: Text.rich(
+                        TextSpan(
+                          text: context.tr('no_account'),
+                          style: text.bodySmall?.copyWith(color: AppColors.mute),
+                          children: [
+                            TextSpan(
+                              text: context.tr('register_now'),
+                              style: const TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
