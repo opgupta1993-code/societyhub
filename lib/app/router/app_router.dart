@@ -16,6 +16,7 @@ import '../../features/resident/screens/rent_payments_screen.dart';
 import '../../features/resident/screens/documents_screen.dart';
 import '../../features/resident/screens/raise_issue_screen.dart';
 import '../../features/resident/screens/share_with_landlord_screen.dart';
+import '../../features/resident/screens/invite_visitor_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = ValueNotifier<bool>(false);
@@ -94,12 +95,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/visitors',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B3',
-          screenTitle: 'My Visitors & Gate Pass',
-          category: 'B. Resident',
-          description: 'Invite guest, QR pass generation, share pass via WhatsApp',
-        ),
+        builder: (context, state) => const InviteVisitorScreen(), // B3 / Invite Visitor & Gate Pass
       ),
       GoRoute(
         path: '/visitor-log',
