@@ -101,10 +101,15 @@ class AuthNotifier extends Notifier<AuthState> {
     if (response['success'] == true && response['user'] != null) {
       final token = response['token'] as String?;
       final userData = response['user'] as Map<String, dynamic>;
+      final rawRoleId = userData['role_id'];
+      final rawRole = userData['role']?.toString();
+      final activeRole = UserRole.fromRoleId(rawRoleId, rawRole);
 
-      final rawRole = userData['role']?.toString() ?? 'resident';
-      final activeRole = UserRole.fromCode(rawRole);
-      final isOwnerRole = rawRole.toLowerCase() == 'owner' || rawRole.toLowerCase() == 'admin';
+      final int parsedRoleId = (rawRoleId != null)
+          ? (int.tryParse(rawRoleId.toString()) ?? (activeRole == UserRole.admin ? 1 : 2))
+          : (activeRole == UserRole.admin ? 1 : 2);
+
+      final isOwnerRole = parsedRoleId == 1 || activeRole == UserRole.admin;
 
       final isRegistered = userData['uid'] != null &&
           userData['name'] != null &&
@@ -117,6 +122,7 @@ class AuthNotifier extends Notifier<AuthState> {
           phone: userData['phone'] ?? phone,
           societyName: 'Demo Housing Society',
           blockFlat: 'Tower B - 402',
+          roleId: parsedRoleId,
           isOwner: isOwnerRole,
           activeRole: activeRole,
           availableRoles: UserRole.values.toList(),

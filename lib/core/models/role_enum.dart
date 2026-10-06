@@ -40,6 +40,18 @@ enum UserRole {
     required this.description,
   });
 
+  static UserRole fromRoleId(dynamic rawRoleId, [String? rawRole]) {
+    if (rawRoleId != null) {
+      final idStr = rawRoleId.toString().trim();
+      if (idStr == '1') return UserRole.admin;
+      if (idStr == '2') return UserRole.resident;
+    }
+    if (rawRole != null) {
+      return fromCode(rawRole);
+    }
+    return UserRole.resident;
+  }
+
   static UserRole fromCode(String rawRole) {
     final lower = rawRole.trim().toLowerCase();
     if (lower == 'owner' || lower == 'admin' || lower == 'adm') {

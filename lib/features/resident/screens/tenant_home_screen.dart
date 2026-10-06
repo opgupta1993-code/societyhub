@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/language_selection_modal.dart';
 
 /// Screen: Tenant Home Dashboard (from wireframe image)
 class TenantHomeScreen extends ConsumerStatefulWidget {
@@ -60,22 +61,45 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                       ),
                     ],
                   ),
-                  InkWell(
-                    onTap: () => context.push('/notifications'),
-                    borderRadius: BorderRadius.circular(24),
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      decoration: const BoxDecoration(
-                        color: AppColors.tint,
-                        shape: BoxShape.circle,
+                  Row(
+                    children: [
+                      // Language Switcher Globe Button
+                      GestureDetector(
+                        onTap: () => showLanguageSelectionSheet(context, ref),
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.language_rounded,
+                            color: AppColors.primary,
+                            size: 22,
+                          ),
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.notifications_active_rounded,
-                        color: AppColors.amber,
-                        size: 24,
+                      const SizedBox(width: 8),
+                      // Notification Bell
+                      InkWell(
+                        onTap: () => context.push('/notifications'),
+                        borderRadius: BorderRadius.circular(24),
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: const BoxDecoration(
+                            color: AppColors.tint,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.notifications_active_rounded,
+                            color: AppColors.amber,
+                            size: 22,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),

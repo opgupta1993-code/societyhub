@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/language_selection_modal.dart';
 
 /// Screen: Admin / Owner Home Dashboard (matches wireframe image 2 exactly)
 class AdminOwnerHomeScreen extends ConsumerStatefulWidget {
@@ -60,21 +61,44 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
                     ],
                   ),
 
-                  // Notification Bell Badge (Light Amber background)
-                  GestureDetector(
-                    onTap: () => context.push('/notifications'),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFEF3C7), // Light amber/gold container
-                        shape: BoxShape.circle,
+                  Row(
+                    children: [
+                      // Language Switcher Globe Button
+                      GestureDetector(
+                        onTap: () => showLanguageSelectionSheet(context, ref),
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.language_rounded,
+                            color: AppColors.primary,
+                            size: 22,
+                          ),
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.notifications_rounded,
-                        color: Color(0xFFD97706), // Gold bell icon
-                        size: 24,
+                      const SizedBox(width: 8),
+                      // Notification Bell Badge (Light Amber background)
+                      GestureDetector(
+                        onTap: () => context.push('/notifications'),
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFFEF3C7), // Light amber/gold container
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.notifications_rounded,
+                            color: Color(0xFFD97706), // Gold bell icon
+                            size: 22,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),

@@ -6,7 +6,8 @@ class UserModel {
   final String phone;
   final String societyName;
   final String blockFlat;
-  final bool isOwner; // true = Owner, false = Tenant
+  final int roleId; // 1 = Admin/Owner, 2 = Tenant
+  final bool isOwner; // true = Owner (role_id 1), false = Tenant (role_id 2)
   final UserRole activeRole;
   final List<UserRole> availableRoles;
   final String? profilePhotoUrl;
@@ -17,7 +18,8 @@ class UserModel {
     required this.phone,
     required this.societyName,
     required this.blockFlat,
-    this.isOwner = true,
+    this.roleId = 2,
+    this.isOwner = false,
     required this.activeRole,
     required this.availableRoles,
     this.profilePhotoUrl,
@@ -29,6 +31,7 @@ class UserModel {
     String? phone,
     String? societyName,
     String? blockFlat,
+    int? roleId,
     bool? isOwner,
     UserRole? activeRole,
     List<UserRole>? availableRoles,
@@ -40,6 +43,7 @@ class UserModel {
       phone: phone ?? this.phone,
       societyName: societyName ?? this.societyName,
       blockFlat: blockFlat ?? this.blockFlat,
+      roleId: roleId ?? this.roleId,
       isOwner: isOwner ?? this.isOwner,
       activeRole: activeRole ?? this.activeRole,
       availableRoles: availableRoles ?? this.availableRoles,
@@ -54,7 +58,8 @@ class UserModel {
       phone: '+91 98765 43210',
       societyName: 'Greenwood Heights CHS',
       blockFlat: 'Tower A - 402',
-      isOwner: true,
+      roleId: 2,
+      isOwner: false,
       activeRole: UserRole.resident,
       availableRoles: [
         UserRole.resident,
