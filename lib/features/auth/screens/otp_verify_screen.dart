@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/providers/auth_provider.dart';
 
-/// Screen 3: Verify OTP Screen (from wireframe image)
+/// Screen 3: Verify OTP Screen (4-Digit OTP Verification)
 class OtpVerifyScreen extends ConsumerStatefulWidget {
   final String phone;
 
@@ -20,9 +20,10 @@ class OtpVerifyScreen extends ConsumerStatefulWidget {
 }
 
 class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
+  // 4 Digit Controllers & Focus Nodes
   final List<TextEditingController> _controllers =
-      List.generate(6, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+      List.generate(4, (_) => TextEditingController());
+  final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
 
   int _secondsRemaining = 27;
   Timer? _timer;
@@ -33,12 +34,12 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
     super.initState();
     _startTimer();
 
-    // Auto-fill default test OTP digits (4 8 2 9 5 0 or from server info)
+    // Auto-fill default test OTP digits from server info or 5012 / 5582
     final info = ref.read(authProvider).infoMessage;
-    final match = RegExp(r'\d{4,6}').firstMatch(info ?? '');
-    final otpStr = match != null ? match.group(0)! : '482950';
+    final match = RegExp(r'\d{4}').firstMatch(info ?? '');
+    final otpStr = match != null ? match.group(0)! : '5582';
 
-    for (int i = 0; i < otpStr.length && i < 6; i++) {
+    for (int i = 0; i < otpStr.length && i < 4; i++) {
       _controllers[i].text = otpStr[i];
     }
   }
@@ -72,7 +73,7 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
   Future<void> _verifyOtp() async {
     final otp = _otpCode.trim();
     if (otp.length < 4) {
-      setState(() => _error = 'Please enter the complete verification code');
+      setState(() => _error = 'Please enter the complete 4-digit verification code');
       return;
     }
     setState(() => _error = null);
@@ -124,7 +125,7 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
               // Subtitle
               Text.rich(
                 TextSpan(
-                  text: 'We sent a 6-digit code to\n',
+                  text: 'We sent a 4-digit code to\n',
                   style: text.bodyMedium?.copyWith(
                     color: AppColors.mute,
                     fontSize: 14,
@@ -141,15 +142,15 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 36),
 
-              // 6 Digit Input Boxes
+              // 4 Digit Input Boxes
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(6, (index) => _digitBox(index)),
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(4, (index) => _digitBox(index)),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
 
               // Resend Timer Below OTP Boxes
               Center(
@@ -254,11 +255,11 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
 
   Widget _digitBox(int index) {
     return Container(
-      width: 48,
-      height: 56,
+      width: 60,
+      height: 64,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _focusNodes[index].hasFocus
               ? const Color(0xFF0062E0)
@@ -274,7 +275,7 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
           textAlign: TextAlign.center,
           maxLength: 1,
           style: const TextStyle(
-            fontSize: 22,
+            fontSize: 24,
             fontWeight: FontWeight.w800,
             color: AppColors.ink,
           ),
@@ -284,7 +285,7 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
             contentPadding: EdgeInsets.zero,
           ),
           onChanged: (value) {
-            if (value.isNotEmpty && index < 5) {
+            if (value.isNotEmpty && index < 3) {
               _focusNodes[index + 1].requestFocus();
             } else if (value.isEmpty && index > 0) {
               _focusNodes[index - 1].requestFocus();
