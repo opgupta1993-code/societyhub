@@ -98,15 +98,14 @@ class AuthNotifier extends Notifier<AuthState> {
 
     final response = await ApiService.verifyOtp(phone, otp);
 
-    if (response['success'] == true) {
+    if (response['success'] == true && response['user'] != null) {
       final token = response['token'] as String?;
-      final userData = response['user'] as Map<String, dynamic>?;
+      final userData = response['user'] as Map<String, dynamic>;
 
-      final roleCode = userData?['role']?.toString().toUpperCase() ?? 'RES';
+      final roleCode = userData['role']?.toString().toUpperCase() ?? 'RES';
       final activeRole = UserRole.fromCode(roleCode);
 
-      final isRegistered = userData != null &&
-          userData['uid'] != null &&
+      final isRegistered = userData['uid'] != null &&
           userData['name'] != null &&
           userData['name'] != 'New User';
 
@@ -131,13 +130,9 @@ class AuthNotifier extends Notifier<AuthState> {
 
         return VerifyResult(VerifyStatus.registered, user: user);
       } else {
-        // User is not registered yet -> needs registration
-        const notRegMsg = 'Your mobile number is not registered. Please create your account.';
-        state = state.copyWith(
-          isLoading: false,
-          error: notRegMsg,
-        );
-        return VerifyResult(VerifyStatus.needsRegistration, message: notRegMsg);
+        // User data missing/unregistered -> redirect to Registration
+        state = state.copyWith(isLoading: false);
+        return VerifyResult(VerifyStatus.needsRegistration);
       }
     } else {
       // Fallback for testing with 5582 / 5012 / 123456
@@ -151,15 +146,9 @@ class AuthNotifier extends Notifier<AuthState> {
         );
         return VerifyResult(VerifyStatus.registered, user: user);
       } else {
-        final errStr = response['message'] ?? 'Invalid OTP code';
-        state = state.copyWith(
-          isLoading: false,
-          error: errStr,
-        );
-        return VerifyResult(
-          VerifyStatus.error,
-          message: errStr,
-        );
+        // Data not received or unregistered -> redirect to Registration
+        state = state.copyWith(isLoading: false);
+        return VerifyResult(VerifyStatus.needsRegistration);
       }
     }
   }
