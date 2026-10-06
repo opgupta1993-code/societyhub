@@ -106,17 +106,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // Official SocietyHub Logo Asset
+                                // Official SocietyHub Icon Mark & Text Badge
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: 0.1),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
                                   ),
-                                  child: Image.asset(
-                                    'assets/images/logo.png',
-                                    height: 38,
-                                    fit: BoxFit.contain,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.asset(
+                                        'assets/images/app_icon.png',
+                                        height: 32,
+                                        fit: BoxFit.contain,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Image.asset(
+                                        'assets/images/logo.png',
+                                        height: 28,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 // Language Switcher Button
