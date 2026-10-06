@@ -2,7 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/providers/auth_provider.dart';
+import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/otp_verify_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/common/screens/notifications_screen.dart';
 import '../../features/common/screens/profile_screen.dart';
@@ -14,25 +16,39 @@ final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
 
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/splash',
     redirect: (context, state) {
-      final isLoggingIn = state.matchedLocation == '/login' || state.matchedLocation == '/register';
+      final isAuthFlow = state.matchedLocation == '/splash' ||
+          state.matchedLocation == '/login' ||
+          state.matchedLocation == '/verify-otp' ||
+          state.matchedLocation == '/register';
 
-      if (!authState.isAuthenticated && !isLoggingIn) {
+      if (!authState.isAuthenticated && !isAuthFlow) {
         return '/login';
       }
 
-      if (authState.isAuthenticated && isLoggingIn) {
+      if (authState.isAuthenticated && isAuthFlow) {
         return '/home';
       }
 
       return null;
     },
     routes: [
-      // A. Common Screens
+      // Auth & Splash Screens (Wireframe Screens 1, 2, 3)
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashScreen(), // 1 · Splash
+      ),
       GoRoute(
         path: '/login',
-        builder: (context, state) => const LoginScreen(), // A1 / Screen 1
+        builder: (context, state) => const LoginScreen(), // 2 · Login
+      ),
+      GoRoute(
+        path: '/verify-otp',
+        builder: (context, state) {
+          final phone = state.extra as String? ?? '+91 98765 43210';
+          return OtpVerifyScreen(phone: phone); // 3 · Verify OTP
+        },
       ),
       GoRoute(
         path: '/register',

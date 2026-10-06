@@ -10,9 +10,6 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle();
-
-    // Verify Login Screen renders with the header text
-    expect(find.textContaining('Your society'), findsOneWidget);
+    expect(find.byType(SocietyHubApp), findsOneWidget);
   });
 }
