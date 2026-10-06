@@ -34,7 +34,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      // Auth & Splash Screens (Wireframe Screens 1, 2, 3)
+      // Auth & Splash Screens (Wireframe Screens 1, 2, 3, 4)
       GoRoute(
         path: '/splash',
         builder: (context, state) => const SplashScreen(), // 1 · Splash
@@ -52,7 +52,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/register',
-        builder: (context, state) => const RegisterScreen(), // A2
+        builder: (context, state) {
+          final initialPhone = state.extra as String?;
+          return RegisterScreen(initialPhone: initialPhone); // 4 · Register
+        },
       ),
       GoRoute(
         path: '/home',

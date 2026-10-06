@@ -3,6 +3,16 @@ import '../models/user_model.dart';
 import '../models/role_enum.dart';
 import '../network/api_service.dart';
 
+enum VerifyStatus { registered, needsRegistration, error }
+
+class VerifyResult {
+  final VerifyStatus status;
+  final String? message;
+  final UserModel? user;
+
+  VerifyResult(this.status, {this.message, this.user});
+}
+
 class AuthState {
   final bool isAuthenticated;
   final UserModel? user;
@@ -61,7 +71,7 @@ class AuthNotifier extends Notifier<AuthState> {
 
       state = state.copyWith(
         isLoading: false,
-        latestOtp: otpReceived ?? '5012',
+        latestOtp: otpReceived ?? '5582',
         infoMessage: msg,
       );
       return true;
@@ -74,10 +84,9 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
-  Future<void> loginWithOtp(String phone, String otp) async {
+  Future<VerifyResult> verifyOtpWithStatus(String phone, String otp) async {
     state = state.copyWith(isLoading: true, error: null, infoMessage: null);
 
-    // Call live API verify-otp endpoint
     final response = await ApiService.verifyOtp(phone, otp);
 
     if (response['success'] == true) {
@@ -87,55 +96,81 @@ class AuthNotifier extends Notifier<AuthState> {
       final roleCode = userData?['role']?.toString().toUpperCase() ?? 'RES';
       final activeRole = UserRole.fromCode(roleCode);
 
-      final user = UserModel(
-        id: userData?['uid'] ?? 'usr_${DateTime.now().millisecondsSinceEpoch}',
-        name: userData?['name'] ?? 'Society Resident',
-        phone: userData?['phone'] ?? phone,
-        societyName: 'Greenwood Heights CHS',
-        blockFlat: 'Tower A - 402',
-        isOwner: true,
-        activeRole: activeRole,
-        availableRoles: UserRole.values.toList(),
-      );
+      final isRegistered = userData != null &&
+          userData['uid'] != null &&
+          userData['name'] != null &&
+          userData['name'] != 'New User';
 
-      state = AuthState(
-        isAuthenticated: true,
-        user: user,
-        token: token,
-        isLoading: false,
-      );
-    } else {
-      // Fallback for offline or demo testing with 5012 / 5582
-      if (otp == '5012' || otp == '5582' || otp == '123456') {
+      if (isRegistered) {
+        final user = UserModel(
+          id: userData['uid'],
+          name: userData['name'] ?? 'Rahul Sharma',
+          phone: userData['phone'] ?? phone,
+          societyName: 'Demo Housing Society',
+          blockFlat: 'Tower B - 402',
+          isOwner: true,
+          activeRole: activeRole,
+          availableRoles: UserRole.values.toList(),
+        );
+
         state = AuthState(
           isAuthenticated: true,
-          user: UserModel.dummyUser().copyWith(phone: phone),
+          user: user,
+          token: token,
+          isLoading: false,
+        );
+
+        return VerifyResult(VerifyStatus.registered, user: user);
+      } else {
+        // User is not registered yet -> needs registration
+        state = state.copyWith(isLoading: false);
+        return VerifyResult(VerifyStatus.needsRegistration);
+      }
+    } else {
+      // Fallback for testing with 5582 / 5012 / 123456
+      if (otp == '5582' || otp == '5012' || otp == '123456') {
+        final user = UserModel.dummyUser().copyWith(phone: phone);
+        state = AuthState(
+          isAuthenticated: true,
+          user: user,
           token: 'demo_jwt_token',
           isLoading: false,
         );
+        return VerifyResult(VerifyStatus.registered, user: user);
       } else {
         state = state.copyWith(
           isLoading: false,
           error: response['message'] ?? 'Invalid OTP code',
         );
+        return VerifyResult(
+          VerifyStatus.error,
+          message: response['message'] ?? 'Invalid OTP code',
+        );
       }
     }
+  }
+
+  Future<void> loginWithOtp(String phone, String otp) async {
+    await verifyOtpWithStatus(phone, otp);
   }
 
   Future<void> registerUser({
     required String name,
     required String phone,
+    required String email,
     required String society,
+    required String tower,
     required String flat,
     required bool isOwner,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
 
+    final fullFlat = 'Tower $tower - $flat';
     final res = await ApiService.registerUser(
       name: name,
       phone: phone,
       society: society,
-      flat: flat,
+      flat: fullFlat,
       isOwner: isOwner,
     );
 
@@ -144,7 +179,7 @@ class AuthNotifier extends Notifier<AuthState> {
       name: name,
       phone: phone,
       societyName: society,
-      blockFlat: flat,
+      blockFlat: fullFlat,
       isOwner: isOwner,
       activeRole: UserRole.resident,
       availableRoles: UserRole.values.toList(),

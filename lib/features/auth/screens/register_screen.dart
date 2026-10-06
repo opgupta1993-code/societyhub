@@ -1,159 +1,381 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../app/theme/app_colors.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../shared/widgets/app_card.dart';
 
+/// Screen 4: Create Account / Registration Screen (from wireframe image)
 class RegisterScreen extends ConsumerStatefulWidget {
-  const RegisterScreen({super.key});
+  final String? initialPhone;
+
+  const RegisterScreen({
+    super.key,
+    this.initialPhone,
+  });
 
   @override
   ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController(text: 'Rajesh Sharma');
-  final _phoneController = TextEditingController(text: '9876543210');
-  final _societyController = TextEditingController(text: 'Greenwood Heights CHS');
-  final _flatController = TextEditingController(text: 'Tower A - 402');
-  bool _isOwner = true;
+  late final TextEditingController _nameController;
+  late final TextEditingController _phoneController;
+  late final TextEditingController _emailController;
+
+  String _selectedSociety = 'Demo Housing Society';
+  String _selectedTower = 'B';
+  String _selectedFlat = '402';
+  bool _agreedToTerms = true;
+  String? _error;
+
+  final List<String> _societies = [
+    'Demo Housing Society',
+    'Greenwood Heights CHS',
+    'Sunrise Towers',
+    'Royal Palms Society',
+  ];
+
+  final List<String> _towers = ['A', 'B', 'C', 'D'];
+  final List<String> _flats = ['101', '102', '201', '202', '301', '302', '401', '402', '501'];
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: 'Rahul Sharma');
+    _phoneController = TextEditingController(
+      text: widget.initialPhone ?? '+91 98765 43210',
+    );
+    _emailController = TextEditingController(text: 'name@email.com');
+  }
 
   @override
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
-    _societyController.dispose();
-    _flatController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
-  void _handleRegister() {
-    if (_formKey.currentState!.validate()) {
-      ref.read(authProvider.notifier).registerUser(
-            name: _nameController.text.trim(),
-            phone: '+91 ${_phoneController.text.trim()}',
-            society: _societyController.text.trim(),
-            flat: _flatController.text.trim(),
-            isOwner: _isOwner,
-          );
+  Future<void> _handleRegister() async {
+    if (_nameController.text.trim().isEmpty) {
+      setState(() => _error = 'Please enter your full name');
+      return;
+    }
+    if (!_agreedToTerms) {
+      setState(() => _error = 'Please agree to the Terms and Privacy Policy');
+      return;
+    }
+    setState(() => _error = null);
+
+    await ref.read(authProvider.notifier).registerUser(
+          name: _nameController.text.trim(),
+          phone: _phoneController.text.trim(),
+          email: _emailController.text.trim(),
+          society: _selectedSociety,
+          tower: _selectedTower,
+          flat: _selectedFlat,
+          isOwner: true,
+        );
+
+    if (mounted) {
       context.go('/home');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
     final authState = ref.watch(authProvider);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        title: const Text('Register New Account (A2)'),
+        backgroundColor: const Color(0xFFF8FAFC),
+        elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0, top: 8.0),
+            child: Image.asset(
+              'assets/images/app_icon.png',
+              height: 38,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Header Title
               Text(
-                'Join Your Society Community',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                'Fill in your details to register. Default role assigned will be Resident.',
-                style: TextStyle(color: AppColors.textSecondary),
-              ),
-              const SizedBox(height: 24),
-
-              // Name
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Full Name',
-                  prefixIcon: Icon(Icons.person_outline),
+                'Create account',
+                style: text.headlineLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.ink,
+                  fontSize: 28,
                 ),
-                validator: (val) => val == null || val.isEmpty ? 'Enter full name' : null,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
-              // Mobile
-              TextFormField(
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: 'Mobile Number',
-                  prefixIcon: Icon(Icons.phone_android_outlined),
-                  prefixText: '+91 ',
+              // Full Name Card
+              _buildInputCard(
+                label: 'Full name',
+                child: TextField(
+                  controller: _nameController,
+                  style: text.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.ink,
+                  ),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                    isDense: true,
+                    hintText: 'Rahul Sharma',
+                  ),
                 ),
-                validator: (val) => val == null || val.length < 10 ? 'Enter 10-digit number' : null,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
 
-              // Society
-              TextFormField(
-                controller: _societyController,
-                decoration: const InputDecoration(
-                  labelText: 'Society Name',
-                  prefixIcon: Icon(Icons.apartment_outlined),
+              // Mobile Number Card
+              _buildInputCard(
+                label: 'Mobile number',
+                child: TextField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  style: text.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.ink,
+                  ),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                    isDense: true,
+                    hintText: '+91 98765 43210',
+                  ),
                 ),
-                validator: (val) => val == null || val.isEmpty ? 'Enter society name' : null,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
 
-              // Flat
-              TextFormField(
-                controller: _flatController,
-                decoration: const InputDecoration(
-                  labelText: 'Tower / Wing & Flat Number',
-                  prefixIcon: Icon(Icons.home_outlined),
-                  hintText: 'e.g. Building B - 104',
+              // Email Card (Optional)
+              _buildInputCard(
+                label: 'Email (optional)',
+                child: TextField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  style: text.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.ink,
+                  ),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                    isDense: true,
+                    hintText: 'name@email.com',
+                  ),
                 ),
-                validator: (val) => val == null || val.isEmpty ? 'Enter flat number' : null,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
 
-              // Occupant Type Switch (Owner vs Tenant)
-              const Text(
-                'Occupant Type',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              // Society Dropdown Card
+              _buildInputCard(
+                label: 'Society',
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedSociety,
+                    isExpanded: true,
+                    icon: const Icon(Icons.arrow_drop_down_rounded, color: AppColors.ink),
+                    style: text.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.ink,
+                    ),
+                    onChanged: (String? val) {
+                      if (val != null) setState(() => _selectedSociety = val);
+                    },
+                    items: _societies.map((soc) {
+                      return DropdownMenuItem(value: soc, child: Text(soc));
+                    }).toList(),
+                  ),
+                ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
+
+              // Tower & Flat Side-by-side Row
               Row(
                 children: [
                   Expanded(
-                    child: ChoiceChip(
-                      label: const Center(child: Text('Flat Owner')),
-                      selected: _isOwner,
-                      onSelected: (selected) {
-                        if (selected) setState(() => _isOwner = true);
-                      },
+                    child: _buildInputCard(
+                      label: 'Tower',
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedTower,
+                          isExpanded: true,
+                          icon: const Icon(Icons.arrow_drop_down_rounded, color: AppColors.ink),
+                          style: text.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.ink,
+                          ),
+                          onChanged: (String? val) {
+                            if (val != null) setState(() => _selectedTower = val);
+                          },
+                          items: _towers.map((t) {
+                            return DropdownMenuItem(value: t, child: Text(t));
+                          }).toList(),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: ChoiceChip(
-                      label: const Center(child: Text('Tenant')),
-                      selected: !_isOwner,
-                      onSelected: (selected) {
-                        if (selected) setState(() => _isOwner = false);
-                      },
+                    child: _buildInputCard(
+                      label: 'Flat',
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedFlat,
+                          isExpanded: true,
+                          icon: const Icon(Icons.arrow_drop_down_rounded, color: AppColors.ink),
+                          style: text.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.ink,
+                          ),
+                          onChanged: (String? val) {
+                            if (val != null) setState(() => _selectedFlat = val);
+                          },
+                          items: _flats.map((f) {
+                            return DropdownMenuItem(value: f, child: Text(f));
+                          }).toList(),
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
 
-              ElevatedButton(
-                onPressed: authState.isLoading ? null : _handleRegister,
-                child: authState.isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Complete Registration & Continue'),
+              // Terms & Conditions Checkbox
+              Row(
+                children: [
+                  SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: Checkbox(
+                      value: _agreedToTerms,
+                      activeColor: const Color(0xFF0062E0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      onChanged: (val) {
+                        setState(() => _agreedToTerms = val ?? false);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'I agree to the Terms and Privacy Policy',
+                      style: text.bodySmall?.copyWith(
+                        color: AppColors.mute,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
               ),
+
+              if (_error != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  _error!,
+                  style: const TextStyle(color: AppColors.red, fontSize: 13),
+                ),
+              ],
+              const SizedBox(height: 24),
+
+              // Register CTA Button
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0062E0),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  onPressed: authState.isLoading ? null : _handleRegister,
+                  child: authState.isLoading
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Register'),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Already have an account? Log in
+              Center(
+                child: GestureDetector(
+                  onTap: () => context.go('/login'),
+                  child: Text.rich(
+                    TextSpan(
+                      text: 'Already have an account? ',
+                      style: text.bodyMedium?.copyWith(
+                        color: AppColors.mute,
+                        fontSize: 14,
+                      ),
+                      children: const [
+                        TextSpan(
+                          text: 'Log in',
+                          style: TextStyle(
+                            color: Color(0xFF0062E0),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildInputCard({required String label, required Widget child}) {
+    return AppCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.mute,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 4),
+          child,
+        ],
       ),
     );
   }

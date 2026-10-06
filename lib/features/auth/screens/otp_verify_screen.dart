@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/providers/auth_provider.dart';
 
-/// Screen 3: Verify OTP Screen (4-Digit OTP Verification + Live Server Auto-Fill)
+/// Screen 3: Verify OTP Screen (4-Digit OTP Verification + Conditional Registration Route)
 class OtpVerifyScreen extends ConsumerStatefulWidget {
   final String phone;
 
@@ -38,7 +38,7 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
     final latestOtp = ref.read(authProvider).latestOtp;
     final info = ref.read(authProvider).infoMessage;
 
-    String otpStr = '5012';
+    String otpStr = '5582';
     if (latestOtp != null && latestOtp.isNotEmpty) {
       otpStr = latestOtp;
     } else if (info != null) {
@@ -85,13 +85,20 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
     }
     setState(() => _error = null);
 
-    await ref.read(authProvider.notifier).loginWithOtp(widget.phone, otp);
+    final result = await ref
+        .read(authProvider.notifier)
+        .verifyOtpWithStatus(widget.phone, otp);
 
-    final authState = ref.read(authProvider);
-    if (authState.isAuthenticated) {
-      if (mounted) context.go('/home');
-    } else if (authState.error != null) {
-      setState(() => _error = authState.error);
+    if (!mounted) return;
+
+    if (result.status == VerifyStatus.registered) {
+      // Success API data -> Home Screen
+      context.go('/home');
+    } else if (result.status == VerifyStatus.needsRegistration) {
+      // User not registered -> Registration Screen
+      context.push('/register', extra: widget.phone);
+    } else {
+      setState(() => _error = result.message ?? 'Invalid OTP code');
     }
   }
 
