@@ -106,7 +106,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text('🏛️', style: TextStyle(fontSize: 38)),
+                                // Official SocietyHub Logo Asset
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Image.asset(
+                                    'assets/images/logo.png',
+                                    height: 38,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
                                 // Language Switcher Button
                                 PopupMenuButton<String>(
                                   icon: const Icon(Icons.language_rounded, color: Colors.white),
@@ -163,7 +175,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 16),
                             Text(
                               'Your society,\nin your pocket',
                               style: text.headlineMedium?.copyWith(
