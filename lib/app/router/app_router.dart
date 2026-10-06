@@ -15,6 +15,7 @@ import '../../features/resident/screens/pay_bill_screen.dart';
 import '../../features/resident/screens/rent_payments_screen.dart';
 import '../../features/resident/screens/documents_screen.dart';
 import '../../features/resident/screens/raise_issue_screen.dart';
+import '../../features/resident/screens/share_with_landlord_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = ValueNotifier<bool>(false);
@@ -220,12 +221,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/shared-access',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'C9',
-          screenTitle: 'Shared Access Management',
-          category: 'C. Records & Sharing',
-          description: 'People & temporary links, revoke permissions',
-        ),
+        builder: (context, state) => const ShareWithLandlordScreen(), // C9 / Share with landlord
       ),
 
       // D. Admin Screens (D1 - D7)
