@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../../core/models/role_enum.dart';
 import '../../../core/providers/auth_provider.dart';
 
@@ -11,6 +12,7 @@ class HomeDashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
+    final currentLocale = ref.watch(localeProvider);
     final user = authState.user;
 
     if (user == null) {
@@ -37,6 +39,56 @@ class HomeDashboardScreen extends ConsumerWidget {
           ],
         ),
         actions: [
+          // Language Switcher Dropdown
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.language_rounded, color: AppColors.primary),
+            tooltip: context.tr('switch_language'),
+            onSelected: (String langCode) {
+              ref.read(localeProvider.notifier).changeLocale(langCode);
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'en',
+                child: Row(
+                  children: [
+                    if (currentLocale.languageCode == 'en') const Icon(Icons.check, size: 18, color: AppColors.primary),
+                    const SizedBox(width: 8),
+                    const Text('English'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'hi',
+                child: Row(
+                  children: [
+                    if (currentLocale.languageCode == 'hi') const Icon(Icons.check, size: 18, color: AppColors.primary),
+                    const SizedBox(width: 8),
+                    const Text('हिंदी (Hindi)'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'mr',
+                child: Row(
+                  children: [
+                    if (currentLocale.languageCode == 'mr') const Icon(Icons.check, size: 18, color: AppColors.primary),
+                    const SizedBox(width: 8),
+                    const Text('मराठी (Marathi)'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'gu',
+                child: Row(
+                  children: [
+                    if (currentLocale.languageCode == 'gu') const Icon(Icons.check, size: 18, color: AppColors.primary),
+                    const SizedBox(width: 8),
+                    const Text('ગુજરાતી (Gujarati)'),
+                  ],
+                ),
+              ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
             onPressed: () => context.push('/notifications'),
@@ -67,7 +119,7 @@ class HomeDashboardScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Quick Actions (${activeRole.label})',
+                  '${context.tr('quick_actions')} (${activeRole.label})',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 18),
                 ),
                 Text(
@@ -174,9 +226,9 @@ class HomeDashboardScreen extends ConsumerWidget {
       case UserRole.resident:
         return Row(
           children: [
-            _kpiCard(context, 'Pending Dues', '₹ 2,450', 'B1: My Accounts', Colors.orange, Icons.account_balance_wallet_outlined),
+            _kpiCard(context, context.tr('pending_dues'), '₹ 2,450', 'B1: My Accounts', Colors.orange, Icons.account_balance_wallet_outlined),
             const SizedBox(width: 12),
-            _kpiCard(context, 'Gate Passes', '2 Active', 'B3: Visitors', Colors.blue, Icons.qr_code_rounded),
+            _kpiCard(context, context.tr('gate_passes'), '2 Active', 'B3: Visitors', Colors.blue, Icons.qr_code_rounded),
           ],
         );
       case UserRole.admin:
@@ -261,7 +313,7 @@ class HomeDashboardScreen extends ConsumerWidget {
   }
 
   Widget _buildActionGrid(BuildContext context, UserRole role) {
-    final tiles = _getTilesForRole(role);
+    final tiles = _getTilesForRole(context, role);
 
     return GridView.builder(
       shrinkWrap: true,
@@ -337,18 +389,18 @@ class HomeDashboardScreen extends ConsumerWidget {
     );
   }
 
-  List<_TileData> _getTilesForRole(UserRole role) {
+  List<_TileData> _getTilesForRole(BuildContext context, UserRole role) {
     switch (role) {
       case UserRole.resident:
         return [
-          _TileData('B1', 'My Dues & Pay', 'UPI, Card, Netbanking', Icons.payment_outlined, Colors.blue, '/dues'),
-          _TileData('B2', 'Complaints', 'Raise issue, upload photo', Icons.build_circle_outlined, Colors.orange, '/complaints'),
-          _TileData('B3', 'Gate Pass & Visitor', 'QR Pass, invite guests', Icons.qr_code_scanner_rounded, Colors.green, '/visitors'),
-          _TileData('B5', 'Notices', 'Society announcements', Icons.campaign_outlined, Colors.purple, '/notices'),
-          _TileData('B6', 'Polls & Voting', 'Participate & see results', Icons.how_to_vote_outlined, Colors.teal, '/polls'),
-          _TileData('B7', 'Amenity Booking', 'Club house, slots', Icons.sports_tennis_outlined, Colors.indigo, '/amenities'),
-          _TileData('C1', 'My Records Hub', 'Rent, receipts, statements', Icons.folder_shared_outlined, Colors.amber, '/records-hub'),
-          _TileData('B9', 'Society Directory', 'Search contacts & call', Icons.contacts_outlined, Colors.blueGrey, '/directory'),
+          _TileData('B1', context.tr('pending_dues'), 'UPI, Card, Netbanking', Icons.payment_outlined, Colors.blue, '/dues'),
+          _TileData('B2', context.tr('complaints'), 'Raise issue, upload photo', Icons.build_circle_outlined, Colors.orange, '/complaints'),
+          _TileData('B3', context.tr('gate_passes'), 'QR Pass, invite guests', Icons.qr_code_scanner_rounded, Colors.green, '/visitors'),
+          _TileData('B5', context.tr('notices'), 'Society announcements', Icons.campaign_outlined, Colors.purple, '/notices'),
+          _TileData('B6', context.tr('polls'), 'Participate & see results', Icons.how_to_vote_outlined, Colors.teal, '/polls'),
+          _TileData('B7', context.tr('amenity_booking'), 'Club house, slots', Icons.sports_tennis_outlined, Colors.indigo, '/amenities'),
+          _TileData('C1', context.tr('records_hub'), 'Rent, receipts, statements', Icons.folder_shared_outlined, Colors.amber, '/records-hub'),
+          _TileData('B9', context.tr('directory'), 'Search contacts & call', Icons.contacts_outlined, Colors.blueGrey, '/directory'),
         ];
       case UserRole.admin:
         return [
