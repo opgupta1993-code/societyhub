@@ -26,29 +26,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   String _formattedPhone() {
-    final raw = _phoneController.text.trim();
-    if (raw.startsWith('+')) return raw;
-    return '+91 $raw';
+    final rawDigits = _phoneController.text.trim().replaceAll(RegExp(r'\D'), '');
+    return '+91$rawDigits';
   }
 
   Future<void> _handleSendOtp() async {
-    final raw = _phoneController.text.trim();
-    if (raw.length < 10) {
+    final rawDigits = _phoneController.text.trim().replaceAll(RegExp(r'\D'), '');
+    if (rawDigits.length < 10) {
       setState(() => _error = 'Please enter a valid 10-digit mobile number');
       return;
     }
     setState(() => _error = null);
 
     final phone = _formattedPhone();
-    final success = await ref.read(authProvider.notifier).requestOtp(phone);
+    
+    // Trigger OTP Request (background API call)
+    ref.read(authProvider.notifier).requestOtp(phone);
 
-    if (success) {
-      if (mounted) {
-        context.push('/verify-otp', extra: phone);
-      }
-    } else {
-      final authError = ref.read(authProvider).error;
-      setState(() => _error = authError ?? 'Failed to send OTP');
+    // Immediately navigate to /verify-otp screen
+    if (mounted) {
+      context.push('/verify-otp', extra: phone);
     }
   }
 
@@ -223,27 +220,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
-            // Footer Register Link
-            GestureDetector(
-              onTap: () => context.push('/register'),
-              child: Text.rich(
-                TextSpan(
-                  text: 'New here? ',
-                  style: text.bodyMedium?.copyWith(
-                    color: AppColors.mute,
-                    fontSize: 14,
-                  ),
-                  children: const [
-                    TextSpan(
-                      text: 'Register',
-                      style: TextStyle(
-                        color: Color(0xFF0062E0),
-                        fontWeight: FontWeight.w700,
-                      ),
+            // Footer Register Link (Large hit target with InkWell)
+            InkWell(
+              onTap: () {
+                context.push('/register');
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: Text.rich(
+                  TextSpan(
+                    text: 'New here? ',
+                    style: text.bodyMedium?.copyWith(
+                      color: AppColors.mute,
+                      fontSize: 15,
                     ),
-                  ],
+                    children: const [
+                      TextSpan(
+                        text: 'Register',
+                        style: TextStyle(
+                          color: Color(0xFF0062E0),
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
