@@ -62,100 +62,121 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<bool> requestOtp(String phone) async {
     state = state.copyWith(isLoading: true, error: null, infoMessage: null);
 
-    final response = await ApiService.requestOtp(phone);
-    if (response['success'] == true) {
-      final otpReceived = response['otp']?.toString();
-      final msg = otpReceived != null
-          ? 'OTP sent successfully! (Server OTP: $otpReceived)'
-          : (response['message'] ?? 'OTP sent successfully!');
+    try {
+      final response = await ApiService.requestOtp(phone);
+      if (response['success'] == true) {
+        final otpReceived = response['otp']?.toString();
+        final msg = otpReceived != null
+            ? 'OTP sent successfully! (Server OTP: $otpReceived)'
+            : (response['message'] ?? 'OTP sent successfully!');
 
+        state = state.copyWith(
+          isLoading: false,
+          latestOtp: otpReceived ?? '5582',
+          infoMessage: msg,
+        );
+        return true;
+      } else {
+        final serverMsg = response['message']?.toString() ?? 'Failed to send OTP';
+        final isNotReg = serverMsg.toLowerCase().contains('not registered') ||
+            serverMsg.toLowerCase().contains('unregistered') ||
+            serverMsg.toLowerCase().contains('user not found');
+
+        final displayErr = isNotReg
+            ? 'Your mobile number is not registered. Please create your account.'
+            : serverMsg;
+
+        state = state.copyWith(
+          isLoading: false,
+          error: displayErr,
+        );
+        return false;
+      }
+    } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        latestOtp: otpReceived ?? '5582',
-        infoMessage: msg,
-      );
-      return true;
-    } else {
-      final serverMsg = response['message']?.toString() ?? 'Failed to send OTP';
-      final isNotReg = serverMsg.toLowerCase().contains('not registered') ||
-          serverMsg.toLowerCase().contains('unregistered') ||
-          serverMsg.toLowerCase().contains('user not found');
-
-      final displayErr = isNotReg
-          ? 'Your mobile number is not registered. Please create your account.'
-          : serverMsg;
-
-      state = state.copyWith(
-        isLoading: false,
-        error: displayErr,
+        error: 'Network error. Please try again.',
       );
       return false;
+    } finally {
+      if (state.isLoading) {
+        state = state.copyWith(isLoading: false);
+      }
     }
   }
 
   Future<VerifyResult> verifyOtpWithStatus(String phone, String otp) async {
     state = state.copyWith(isLoading: true, error: null, infoMessage: null);
 
-    final response = await ApiService.verifyOtp(phone, otp);
+    try {
+      final response = await ApiService.verifyOtp(phone, otp);
 
-    if (response['success'] == true && response['user'] != null) {
-      final token = response['token'] as String?;
-      final userData = response['user'] as Map<String, dynamic>;
-      final rawRoleId = userData['role_id'];
-      final rawRole = userData['role']?.toString();
-      final activeRole = UserRole.fromRoleId(rawRoleId, rawRole);
+      if (response['success'] == true && response['user'] != null) {
+        final token = response['token'] as String?;
+        final userData = response['user'] as Map<String, dynamic>;
+        final rawRoleId = userData['role_id'];
+        final rawRole = userData['role']?.toString();
+        final activeRole = UserRole.fromRoleId(rawRoleId, rawRole);
 
-      final int parsedRoleId = (rawRoleId != null)
-          ? (int.tryParse(rawRoleId.toString()) ?? (activeRole == UserRole.admin ? 1 : 2))
-          : (activeRole == UserRole.admin ? 1 : 2);
+        final int parsedRoleId = (rawRoleId != null)
+            ? (int.tryParse(rawRoleId.toString()) ?? (activeRole == UserRole.admin ? 1 : 2))
+            : (activeRole == UserRole.admin ? 1 : 2);
 
-      final isOwnerRole = parsedRoleId == 1 || activeRole == UserRole.admin;
+        final isOwnerRole = parsedRoleId == 1 || activeRole == UserRole.admin;
 
-      final isRegistered = userData['uid'] != null &&
-          userData['name'] != null &&
-          userData['name'] != 'New User';
+        final isRegistered = userData['uid'] != null &&
+            userData['name'] != null &&
+            userData['name'] != 'New User';
 
-      if (isRegistered) {
-        final user = UserModel(
-          id: userData['uid'],
-          name: userData['name'] ?? 'Rahul Sharma',
-          phone: userData['phone'] ?? phone,
-          societyName: 'Demo Housing Society',
-          blockFlat: 'Tower B - 402',
-          roleId: parsedRoleId,
-          isOwner: isOwnerRole,
-          activeRole: activeRole,
-          availableRoles: UserRole.values.toList(),
-        );
+        if (isRegistered) {
+          final user = UserModel(
+            id: userData['uid'],
+            name: userData['name'] ?? 'Rahul Sharma',
+            phone: userData['phone'] ?? phone,
+            societyName: 'Demo Housing Society',
+            blockFlat: 'Tower B - 402',
+            roleId: parsedRoleId,
+            isOwner: isOwnerRole,
+            activeRole: activeRole,
+            availableRoles: UserRole.values.toList(),
+          );
 
-        state = AuthState(
-          isAuthenticated: true,
-          user: user,
-          token: token,
-          isLoading: false,
-        );
+          state = AuthState(
+            isAuthenticated: true,
+            user: user,
+            token: token,
+            isLoading: false,
+          );
 
-        return VerifyResult(VerifyStatus.registered, user: user);
+          return VerifyResult(VerifyStatus.registered, user: user);
+        } else {
+          // User data missing/unregistered -> redirect to Registration
+          state = state.copyWith(isLoading: false);
+          return VerifyResult(VerifyStatus.needsRegistration);
+        }
       } else {
-        // User data missing/unregistered -> redirect to Registration
-        state = state.copyWith(isLoading: false);
-        return VerifyResult(VerifyStatus.needsRegistration);
+        // Fallback for testing with 5582 / 5012 / 123456
+        if (otp == '5582' || otp == '5012' || otp == '123456') {
+          final user = UserModel.dummyUser().copyWith(phone: phone);
+          state = AuthState(
+            isAuthenticated: true,
+            user: user,
+            token: 'demo_jwt_token',
+            isLoading: false,
+          );
+          return VerifyResult(VerifyStatus.registered, user: user);
+        } else {
+          // Data not received or unregistered -> redirect to Registration
+          state = state.copyWith(isLoading: false);
+          return VerifyResult(VerifyStatus.needsRegistration);
+        }
       }
-    } else {
-      // Fallback for testing with 5582 / 5012 / 123456
-      if (otp == '5582' || otp == '5012' || otp == '123456') {
-        final user = UserModel.dummyUser().copyWith(phone: phone);
-        state = AuthState(
-          isAuthenticated: true,
-          user: user,
-          token: 'demo_jwt_token',
-          isLoading: false,
-        );
-        return VerifyResult(VerifyStatus.registered, user: user);
-      } else {
-        // Data not received or unregistered -> redirect to Registration
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: 'Verification error');
+      return VerifyResult(VerifyStatus.error, message: 'Verification error');
+    } finally {
+      if (state.isLoading) {
         state = state.copyWith(isLoading: false);
-        return VerifyResult(VerifyStatus.needsRegistration);
       }
     }
   }

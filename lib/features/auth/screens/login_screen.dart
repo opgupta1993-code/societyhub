@@ -18,6 +18,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _phoneController = TextEditingController(text: '9876543210');
   String? _error;
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -36,22 +37,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       setState(() => _error = 'Please enter a valid 10-digit mobile number');
       return;
     }
-    setState(() => _error = null);
+    setState(() {
+      _error = null;
+      _isSubmitting = true;
+    });
 
     final phone = _formattedPhone();
-    
-    // Trigger OTP Request (background API call)
-    final success = await ref.read(authProvider.notifier).requestOtp(phone);
 
-    if (!mounted) return;
+    try {
+      // Trigger OTP Request (background API call)
+      final success = await ref.read(authProvider.notifier).requestOtp(phone);
 
-    if (success) {
-      context.push('/verify-otp', extra: phone);
-    } else {
-      final authError = ref.read(authProvider).error;
-      setState(() {
-        _error = authError ?? 'Your mobile number is not registered. Please create your account.';
-      });
+      if (!mounted) return;
+
+      if (success) {
+        context.push('/verify-otp', extra: phone);
+      } else {
+        final authError = ref.read(authProvider).error;
+        setState(() {
+          _error = authError ?? 'Your mobile number is not registered. Please create your account.';
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
@@ -246,8 +256,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        onPressed: authState.isLoading ? null : _handleSendOtp,
-                        child: authState.isLoading
+                        onPressed: _isSubmitting ? null : _handleSendOtp,
+                        child: _isSubmitting
                             ? const SizedBox(
                                 width: 22,
                                 height: 22,

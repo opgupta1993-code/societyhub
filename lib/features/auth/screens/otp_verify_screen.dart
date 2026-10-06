@@ -28,6 +28,7 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
   int _secondsRemaining = 27;
   Timer? _timer;
   String? _error;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -83,36 +84,44 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
       setState(() => _error = 'Please enter the complete 4-digit verification code');
       return;
     }
-    setState(() => _error = null);
+    setState(() {
+      _error = null;
+      _isSubmitting = true;
+    });
 
-    final result = await ref
-        .read(authProvider.notifier)
-        .verifyOtpWithStatus(widget.phone, otp);
+    try {
+      final result = await ref
+          .read(authProvider.notifier)
+          .verifyOtpWithStatus(widget.phone, otp);
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    if (result.status == VerifyStatus.registered) {
-      // Success API data -> Home Screen
-      context.go('/home');
-    } else if (result.status == VerifyStatus.needsRegistration) {
-      // User not registered -> Show message & navigate to Registration Screen
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Your mobile number is not registered. Please create your account.'),
-          backgroundColor: AppColors.red,
-          duration: Duration(seconds: 3),
-        ),
-      );
-      context.push('/register', extra: widget.phone);
-    } else {
-      setState(() => _error = result.message ?? 'Invalid OTP code');
+      if (result.status == VerifyStatus.registered) {
+        // Success API data -> Home Screen
+        context.go('/home');
+      } else if (result.status == VerifyStatus.needsRegistration) {
+        // User not registered -> Show message & navigate to Registration Screen
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Your mobile number is not registered. Please create your account.'),
+            backgroundColor: AppColors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        context.push('/register', extra: widget.phone);
+      } else {
+        setState(() => _error = result.message ?? 'Invalid OTP code');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final authState = ref.watch(authProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -244,8 +253,8 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  onPressed: authState.isLoading ? null : _verifyOtp,
-                  child: authState.isLoading
+                  onPressed: _isSubmitting ? null : _verifyOtp,
+                  child: _isSubmitting
                       ? const SizedBox(
                           width: 22,
                           height: 22,
