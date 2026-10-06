@@ -4,10 +4,10 @@ import 'package:go_router/go_router.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
-import '../../features/common/screens/home_dashboard_screen.dart';
 import '../../features/common/screens/notifications_screen.dart';
 import '../../features/common/screens/profile_screen.dart';
 import '../../features/common/screens/feature_placeholder_screen.dart';
+import '../../features/resident/screens/tenant_home_screen.dart';
 import '../../features/resident/screens/pay_bill_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -40,7 +40,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/home',
-        builder: (context, state) => const HomeDashboardScreen(), // A3
+        builder: (context, state) => const TenantHomeScreen(), // A3 / Tenant Home
       ),
       GoRoute(
         path: '/notifications',
