@@ -41,11 +41,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final phone = _formattedPhone();
     
     // Trigger OTP Request (background API call)
-    ref.read(authProvider.notifier).requestOtp(phone);
+    final success = await ref.read(authProvider.notifier).requestOtp(phone);
 
-    // Immediately navigate to /verify-otp screen
-    if (mounted) {
+    if (!mounted) return;
+
+    if (success) {
       context.push('/verify-otp', extra: phone);
+    } else {
+      final authError = ref.read(authProvider).error;
+      setState(() {
+        _error = authError ?? 'Your mobile number is not registered. Please create your account.';
+      });
     }
   }
 
@@ -53,6 +59,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final authState = ref.watch(authProvider);
+    final displayErr = _error ?? authState.error;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -175,15 +182,52 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       ],
                     ),
-                    if (_error != null) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        _error!,
-                        style: const TextStyle(
-                          color: AppColors.red,
-                          fontSize: 12,
+                    if (displayErr != null) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.red.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.red.withValues(alpha: 0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.error_outline_rounded, color: AppColors.red, size: 20),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                displayErr,
+                                style: const TextStyle(
+                                  color: AppColors.red,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                      if (displayErr.contains('not registered')) ...[
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: const Color(0xFF0062E0),
+                              side: const BorderSide(color: Color(0xFF0062E0), width: 1.5),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                            onPressed: () => context.push('/register', extra: _formattedPhone()),
+                            icon: const Icon(Icons.person_add_outlined, size: 18),
+                            label: const Text(
+                              'Create account now',
+                              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                     const SizedBox(height: 20),
                     SizedBox(

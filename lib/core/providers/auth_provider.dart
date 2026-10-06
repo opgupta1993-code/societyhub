@@ -76,9 +76,18 @@ class AuthNotifier extends Notifier<AuthState> {
       );
       return true;
     } else {
+      final serverMsg = response['message']?.toString() ?? 'Failed to send OTP';
+      final isNotReg = serverMsg.toLowerCase().contains('not registered') ||
+          serverMsg.toLowerCase().contains('unregistered') ||
+          serverMsg.toLowerCase().contains('user not found');
+
+      final displayErr = isNotReg
+          ? 'Your mobile number is not registered. Please create your account.'
+          : serverMsg;
+
       state = state.copyWith(
         isLoading: false,
-        error: response['message'] ?? 'Failed to send OTP',
+        error: displayErr,
       );
       return false;
     }
@@ -108,7 +117,7 @@ class AuthNotifier extends Notifier<AuthState> {
           phone: userData['phone'] ?? phone,
           societyName: 'Demo Housing Society',
           blockFlat: 'Tower B - 402',
-          isOwner: true,
+          isOwner: userData['role'] == 'owner',
           activeRole: activeRole,
           availableRoles: UserRole.values.toList(),
         );
@@ -123,8 +132,12 @@ class AuthNotifier extends Notifier<AuthState> {
         return VerifyResult(VerifyStatus.registered, user: user);
       } else {
         // User is not registered yet -> needs registration
-        state = state.copyWith(isLoading: false);
-        return VerifyResult(VerifyStatus.needsRegistration);
+        const notRegMsg = 'Your mobile number is not registered. Please create your account.';
+        state = state.copyWith(
+          isLoading: false,
+          error: notRegMsg,
+        );
+        return VerifyResult(VerifyStatus.needsRegistration, message: notRegMsg);
       }
     } else {
       // Fallback for testing with 5582 / 5012 / 123456
@@ -138,13 +151,14 @@ class AuthNotifier extends Notifier<AuthState> {
         );
         return VerifyResult(VerifyStatus.registered, user: user);
       } else {
+        final errStr = response['message'] ?? 'Invalid OTP code';
         state = state.copyWith(
           isLoading: false,
-          error: response['message'] ?? 'Invalid OTP code',
+          error: errStr,
         );
         return VerifyResult(
           VerifyStatus.error,
-          message: response['message'] ?? 'Invalid OTP code',
+          message: errStr,
         );
       }
     }

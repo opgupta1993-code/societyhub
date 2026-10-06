@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,11 +14,19 @@ import '../../features/resident/screens/tenant_home_screen.dart';
 import '../../features/resident/screens/pay_bill_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  final refreshNotifier = ValueNotifier<bool>(false);
+
+  ref.listen<AuthState>(authProvider, (previous, next) {
+    if (previous?.isAuthenticated != next.isAuthenticated) {
+      refreshNotifier.value = next.isAuthenticated;
+    }
+  });
 
   return GoRouter(
     initialLocation: '/splash',
+    refreshListenable: refreshNotifier,
     redirect: (context, state) {
+      final authState = ref.read(authProvider);
       final isAuthFlow = state.matchedLocation == '/splash' ||
           state.matchedLocation == '/login' ||
           state.matchedLocation == '/verify-otp' ||
