@@ -7,6 +7,7 @@ import '../../core/providers/auth_provider.dart';
 import '../../features/admin/screens/admin_owner_home_screen.dart';
 import '../../features/admin/screens/hr_users_screen.dart';
 import '../../features/admin/screens/assign_role_screen.dart';
+import '../../features/admin/screens/manager_permissions_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/otp_verify_screen.dart';
@@ -255,12 +256,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/admin-roles',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'D5',
-          screenTitle: 'Roles & Permissions',
-          category: 'D. Admin',
-          description: 'Edit what each role can view and execute',
-        ),
+        builder: (context, state) => const ManagerPermissionsScreen(),
       ),
       GoRoute(
         path: '/admin-settings',
