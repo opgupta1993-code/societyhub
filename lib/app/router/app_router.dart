@@ -11,6 +11,8 @@ import '../../features/admin/screens/manager_permissions_screen.dart';
 import '../../features/admin/screens/collections_screen.dart';
 import '../../features/admin/screens/complaints_screen.dart';
 import '../../features/admin/screens/audit_log_screen.dart';
+import '../../features/admin/screens/financial_reports_screen.dart';
+import '../../features/admin/screens/society_settings_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/otp_verify_screen.dart';
@@ -262,12 +264,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/admin-settings',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'D6',
-          screenTitle: 'Society Settings',
-          category: 'D. Admin',
-          description: 'Society profile, flats, rates, late fee, payment gateway',
-        ),
+        builder: (context, state) => const SocietySettingsScreen(),
       ),
       GoRoute(
         path: '/admin-audit',
@@ -328,12 +325,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/accountant-reports',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'F5',
-          screenTitle: 'Financial Reports',
-          category: 'F. Accountant',
-          description: 'Download PDF or Excel for Collection, Defaulters, Balance Sheet',
-        ),
+        builder: (context, state) => const FinancialReportsScreen(),
       ),
 
       // G. Committee Screens (G1 - G4)
