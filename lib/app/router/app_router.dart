@@ -6,6 +6,7 @@ import '../../core/models/role_enum.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../features/admin/screens/admin_owner_home_screen.dart';
 import '../../features/admin/screens/hr_users_screen.dart';
+import '../../features/admin/screens/assign_role_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/otp_verify_screen.dart';
@@ -237,6 +238,20 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/admin-hr',
         builder: (context, state) => const HrUsersScreen(),
+      ),
+      GoRoute(
+        path: '/assign-role',
+        builder: (context, state) {
+          final user = state.extra as HrUserItem? ??
+              const HrUserItem(
+                id: '1',
+                name: 'Rahul S.',
+                subtitle: 'B-402 · Tenant',
+                roleLabel: 'Resident',
+                category: 'resident',
+              );
+          return AssignRoleScreen(user: user);
+        },
       ),
       GoRoute(
         path: '/admin-roles',

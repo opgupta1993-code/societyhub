@@ -478,8 +478,12 @@ class _HrUsersScreenState extends ConsumerState<HrUsersScreen> {
     final badgeBg = isResident ? const Color(0xFFE6F4F1) : const Color(0xFFFDF4E7);
     final badgeText = isResident ? const Color(0xFF0F5C4D) : const Color(0xFFC27803);
 
-    return AppCard(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    return GestureDetector(
+      onTap: () {
+        context.push('/assign-role', extra: user);
+      },
+      child: AppCard(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         children: [
           // Circular Avatar (Light teal background with initial letter)
@@ -547,6 +551,7 @@ class _HrUsersScreenState extends ConsumerState<HrUsersScreen> {
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 }
