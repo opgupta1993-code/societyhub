@@ -29,8 +29,15 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: RefreshIndicator(
+          color: const Color(0xFF0F5C4D),
+          onRefresh: () async {
+            await Future.delayed(const Duration(milliseconds: 800));
+            if (mounted) setState(() {});
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -342,6 +349,7 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
           ),
         ),
       ),
+    ),
 
       // Bottom Navigation Bar (5 Items: Home, HR, Billing, Reports, More)
       bottomNavigationBar: Container(

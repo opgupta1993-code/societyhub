@@ -266,7 +266,13 @@ class _CollectionsScreenState extends ConsumerState<CollectionsScreen> {
 
             // Flat Dues List
             Expanded(
-              child: ListView.separated(
+              child: RefreshIndicator(
+                color: const Color(0xFF0F5C4D),
+                onRefresh: () async {
+                  await Future.delayed(const Duration(milliseconds: 800));
+                  if (mounted) setState(() {});
+                },
+                child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
                 itemCount: _filteredFlats.length,
                 separatorBuilder: (context, index) => const SizedBox(height: 12),
@@ -276,6 +282,7 @@ class _CollectionsScreenState extends ConsumerState<CollectionsScreen> {
                 },
               ),
             ),
+          ),
 
             // Bottom Action Buttons (Send reminders & Generate bills)
             Padding(

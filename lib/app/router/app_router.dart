@@ -9,6 +9,7 @@ import '../../features/admin/screens/hr_users_screen.dart';
 import '../../features/admin/screens/assign_role_screen.dart';
 import '../../features/admin/screens/manager_permissions_screen.dart';
 import '../../features/admin/screens/collections_screen.dart';
+import '../../features/admin/screens/complaints_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/otp_verify_screen.dart';
@@ -20,7 +21,6 @@ import '../../features/resident/screens/tenant_home_screen.dart';
 import '../../features/resident/screens/pay_bill_screen.dart';
 import '../../features/resident/screens/rent_payments_screen.dart';
 import '../../features/resident/screens/documents_screen.dart';
-import '../../features/resident/screens/raise_issue_screen.dart';
 import '../../features/resident/screens/share_with_landlord_screen.dart';
 import '../../features/resident/screens/invite_visitor_screen.dart';
 
@@ -107,7 +107,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/complaints',
-        builder: (context, state) => const RaiseIssueScreen(), // B2 / Raise Issue
+        builder: (context, state) => const ComplaintsScreen(),
       ),
       GoRoute(
         path: '/visitors',

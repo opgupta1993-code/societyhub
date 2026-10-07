@@ -30,8 +30,15 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: RefreshIndicator(
+          color: AppColors.primary,
+          onRefresh: () async {
+            await Future.delayed(const Duration(milliseconds: 800));
+            if (mounted) setState(() {});
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -315,27 +322,28 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: AppColors.line, width: 1)),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _navItem(0, Icons.home_outlined, Icons.home_rounded, 'Home'),
-                _navItem(1, Icons.currency_rupee_rounded, Icons.currency_rupee_rounded, 'Rent', route: '/rent'),
-                _navItem(2, Icons.article_outlined, Icons.article_rounded, 'Docs', route: '/documents'),
-                _navItem(3, Icons.sentiment_satisfied_alt_rounded, Icons.sentiment_satisfied_alt_rounded, 'Profile', route: '/profile'),
-              ],
-            ),
+    ),
+    bottomNavigationBar: Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: AppColors.line, width: 1)),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _navItem(0, Icons.home_outlined, Icons.home_rounded, 'Home'),
+              _navItem(1, Icons.currency_rupee_rounded, Icons.currency_rupee_rounded, 'Rent', route: '/rent'),
+              _navItem(2, Icons.article_outlined, Icons.article_rounded, 'Docs', route: '/documents'),
+              _navItem(3, Icons.sentiment_satisfied_alt_rounded, Icons.sentiment_satisfied_alt_rounded, 'Profile', route: '/profile'),
+            ],
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 
   Widget _actionTile(

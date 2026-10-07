@@ -339,7 +339,13 @@ class _HrUsersScreenState extends ConsumerState<HrUsersScreen> {
 
             // Users List
             Expanded(
-              child: _filteredUsers.isEmpty
+              child: RefreshIndicator(
+                color: const Color(0xFF0F5C4D),
+                onRefresh: () async {
+                  await Future.delayed(const Duration(milliseconds: 800));
+                  if (mounted) setState(() {});
+                },
+                child: _filteredUsers.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -365,6 +371,7 @@ class _HrUsersScreenState extends ConsumerState<HrUsersScreen> {
                         return _buildUserCard(user);
                       },
                     ),
+              ),
             ),
           ],
         ),
