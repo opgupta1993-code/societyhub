@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../widgets/report_excel_viewer_dialog.dart';
+import '../widgets/report_pdf_viewer_dialog.dart';
 
 class ReportCardItem {
   final String title;
@@ -63,14 +65,12 @@ class _FinancialReportsScreenState extends ConsumerState<FinancialReportsScreen>
     }
   }
 
-  void _downloadReport(String format, String reportTitle) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Downloading "$reportTitle" in $format format...'),
-        backgroundColor: const Color(0xFF0F5C4D),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+  void _openPdfViewer(ReportCardItem item) {
+    ReportPdfViewerDialog.show(context, item.title, item.description);
+  }
+
+  void _openExcelViewer(ReportCardItem item) {
+    ReportExcelViewerDialog.show(context, item.title, item.description);
   }
 
   @override
@@ -236,7 +236,7 @@ class _FinancialReportsScreenState extends ConsumerState<FinancialReportsScreen>
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                   ),
-                  onPressed: () => _downloadReport('PDF', item.title),
+                  onPressed: () => _openPdfViewer(item),
                   icon: const Icon(Icons.picture_as_pdf_rounded, size: 18),
                   label: const Text('PDF Report', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
                 ),
@@ -253,7 +253,7 @@ class _FinancialReportsScreenState extends ConsumerState<FinancialReportsScreen>
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                   ),
-                  onPressed: () => _downloadReport('Excel', item.title),
+                  onPressed: () => _openExcelViewer(item),
                   icon: const Icon(Icons.table_chart_rounded, size: 18),
                   label: const Text('Excel Sheet', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
                 ),
