@@ -155,21 +155,21 @@ class AuthNotifier extends Notifier<AuthState> {
           return VerifyResult(VerifyStatus.needsRegistration);
         }
       } else {
-        // Fallback for testing with 5582 / 5012 / 123456
-        if (otp == '5582' || otp == '5012' || otp == '123456') {
-          final user = UserModel.dummyUser().copyWith(phone: phone);
-          state = AuthState(
-            isAuthenticated: true,
-            user: user,
-            token: 'demo_jwt_token',
-            isLoading: false,
-          );
-          return VerifyResult(VerifyStatus.registered, user: user);
-        } else {
-          // Data not received or unregistered -> redirect to Registration
-          state = state.copyWith(isLoading: false);
-          return VerifyResult(VerifyStatus.needsRegistration);
-        }
+        // Server returned success == false or user not found -> Redirect to Registration
+        final serverMsg = response['message']?.toString() ?? 'User not found. Please request an OTP first.';
+        final isNotReg = serverMsg.toLowerCase().contains('not registered') ||
+            serverMsg.toLowerCase().contains('unregistered') ||
+            serverMsg.toLowerCase().contains('user not found');
+
+        final displayMsg = isNotReg
+            ? 'Your mobile number is not registered. Please create your account.'
+            : serverMsg;
+
+        state = state.copyWith(
+          isLoading: false,
+          error: displayMsg,
+        );
+        return VerifyResult(VerifyStatus.needsRegistration, message: displayMsg);
       }
     } catch (e) {
       state = state.copyWith(isLoading: false, error: 'Verification error');
