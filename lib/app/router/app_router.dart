@@ -26,6 +26,11 @@ import '../../features/resident/screens/rent_payments_screen.dart';
 import '../../features/resident/screens/documents_screen.dart';
 import '../../features/resident/screens/share_with_landlord_screen.dart';
 import '../../features/resident/screens/invite_visitor_screen.dart';
+import '../../features/admin/screens/super_admin_home_screen.dart';
+import '../../features/manager/screens/manager_home_screen.dart';
+import '../../features/accountant/screens/accountant_home_screen.dart';
+import '../../features/committee/screens/committee_home_screen.dart';
+import '../../features/guard/screens/guard_home_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = ValueNotifier<bool>(false);
@@ -86,11 +91,24 @@ final routerProvider = Provider<GoRouter>((ref) {
           builder: (context, ref, _) {
             final authState = ref.watch(authProvider);
             final user = authState.user;
-            final isOwnerOrAdmin = user?.activeRole == UserRole.admin || user?.isOwner == true;
-            if (isOwnerOrAdmin) {
-              return const AdminOwnerHomeScreen(); // Owner / Admin Dashboard
+            final activeRole = user?.activeRole ?? UserRole.resident;
+
+            switch (activeRole) {
+              case UserRole.superAdmin:
+                return const SuperAdminHomeScreen();
+              case UserRole.admin:
+                return const AdminOwnerHomeScreen();
+              case UserRole.manager:
+                return const ManagerHomeScreen();
+              case UserRole.resident:
+                return const TenantHomeScreen();
+              case UserRole.accountant:
+                return const AccountantHomeScreen();
+              case UserRole.committee:
+                return const CommitteeHomeScreen();
+              case UserRole.guard:
+                return const GuardHomeScreen();
             }
-            return const TenantHomeScreen(); // Tenant Home Dashboard
           },
         ),
       ),
@@ -383,6 +401,15 @@ final routerProvider = Provider<GoRouter>((ref) {
           screenTitle: 'Staff & Vehicle Check',
           category: 'H. Security Guard',
           description: 'Daily staff attendance, vehicle check, emergency SOS alert trigger',
+        ),
+      ),
+      GoRoute(
+        path: '/amenity-booking',
+        builder: (context, state) => const FeaturePlaceholderScreen(
+          screenId: 'B7',
+          screenTitle: 'Amenity Booking Approvals',
+          category: 'B. Resident & Manager',
+          description: 'Clubhouse, sports lawn slot booking & manager approvals',
         ),
       ),
     ],

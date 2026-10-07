@@ -271,6 +271,14 @@ class HomeDashboardScreen extends ConsumerWidget {
             _kpiCard(context, 'Today Walk-ins', '42 Entered', 'H4: Gate Log', Colors.teal, Icons.badge_outlined),
           ],
         );
+      case UserRole.superAdmin:
+        return Row(
+          children: [
+            _kpiCard(context, 'Societies', '14 Active', 'Onboarded', Colors.indigo, Icons.apartment_outlined),
+            const SizedBox(width: 12),
+            _kpiCard(context, 'Platform Users', '3,420 Total', 'All Units', Colors.teal, Icons.people_outline),
+          ],
+        );
     }
   }
 
@@ -434,11 +442,18 @@ class HomeDashboardScreen extends ConsumerWidget {
           _TileData('H4', 'Gate Logbook', 'In/Out exit marker', Icons.list_alt_outlined, Colors.green, '/guard-log'),
           _TileData('H5', 'Vehicle & Staff', 'RFID / Blacklist check', Icons.directions_car_outlined, Colors.red, '/guard-vehicle-check'),
         ];
+      case UserRole.superAdmin:
+        return [
+          _TileData('S1', 'Societies', 'Manage & Onboard', Icons.apartment_outlined, Colors.indigo, '/home'),
+          _TileData('S2', 'Global HR', 'User & Admin Access', Icons.people_outline, Colors.purple, '/admin-hr'),
+          _TileData('S3', 'System Settings', 'Gateway & Config', Icons.tune_outlined, Colors.blue, '/admin-settings'),
+        ];
     }
   }
 
   Color _getRoleColor(UserRole role) {
     switch (role) {
+      case UserRole.superAdmin: return Colors.indigo;
       case UserRole.resident: return AppColors.roleResident;
       case UserRole.admin: return AppColors.roleAdmin;
       case UserRole.manager: return AppColors.roleManager;
@@ -450,6 +465,7 @@ class HomeDashboardScreen extends ConsumerWidget {
 
   IconData _getRoleIcon(UserRole role) {
     switch (role) {
+      case UserRole.superAdmin: return Icons.domain_rounded;
       case UserRole.resident: return Icons.home_rounded;
       case UserRole.admin: return Icons.admin_panel_settings_rounded;
       case UserRole.manager: return Icons.manage_accounts_rounded;
