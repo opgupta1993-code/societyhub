@@ -118,24 +118,28 @@ class ProfileScreen extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: AppColors.border),
               ),
-              child: ListTile(
-                leading: const Icon(Icons.swap_horiz_rounded, color: AppColors.primary),
-                title: const Text('Active App Role'),
-                subtitle: Text('Currently active as: ${user.activeRole.label}'),
-                trailing: DropdownButton<UserRole>(
-                  value: user.activeRole,
-                  underline: const SizedBox(),
-                  onChanged: (UserRole? newRole) {
-                    if (newRole != null) {
-                      ref.read(authProvider.notifier).switchActiveRole(newRole);
-                    }
-                  },
-                  items: user.availableRoles.map((role) {
-                    return DropdownMenuItem<UserRole>(
-                      value: role,
-                      child: Text(role.label),
-                    );
-                  }).toList(),
+              child: Material(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(14),
+                child: ListTile(
+                  leading: const Icon(Icons.swap_horiz_rounded, color: AppColors.primary),
+                  title: const Text('Active App Role'),
+                  subtitle: Text('Currently active as: ${user.activeRole.label}'),
+                  trailing: DropdownButton<UserRole>(
+                    value: user.activeRole,
+                    underline: const SizedBox(),
+                    onChanged: (UserRole? newRole) {
+                      if (newRole != null) {
+                        ref.read(authProvider.notifier).switchActiveRole(newRole);
+                      }
+                    },
+                    items: user.availableRoles.map((role) {
+                      return DropdownMenuItem<UserRole>(
+                        value: role,
+                        child: Text(role.label),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
             ),
@@ -215,18 +219,22 @@ class ProfileScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.border),
       ),
-      child: ListTile(
-        onTap: onTap,
-        leading: Icon(icon, color: AppColors.primary),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
+        child: ListTile(
+          onTap: onTap,
+          leading: Icon(icon, color: AppColors.primary),
+          title: Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+          ),
+          trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
         ),
-        subtitle: Text(
-          subtitle,
-          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
-        ),
-        trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
       ),
     );
   }
