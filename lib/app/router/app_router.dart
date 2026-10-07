@@ -10,6 +10,7 @@ import '../../features/admin/screens/assign_role_screen.dart';
 import '../../features/admin/screens/manager_permissions_screen.dart';
 import '../../features/admin/screens/collections_screen.dart';
 import '../../features/admin/screens/complaints_screen.dart';
+import '../../features/admin/screens/audit_log_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/otp_verify_screen.dart';
@@ -270,12 +271,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/admin-audit',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'D7',
-          screenTitle: 'Audit Log',
-          category: 'D. Admin',
-          description: 'All administrative, role and data modifications history',
-        ),
+        builder: (context, state) => const AuditLogScreen(),
       ),
 
       // E. Manager Screens (E1 - E5)
