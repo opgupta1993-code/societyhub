@@ -16,15 +16,25 @@ class ApiService {
     };
   }
 
+  static String _cleanPhone(String raw) {
+    final digits = raw.replaceAll(RegExp(r'\D'), '');
+    if (digits.length == 12 && digits.startsWith('91')) {
+      return digits.substring(2);
+    }
+    return digits.isNotEmpty ? digits : raw;
+  }
+
   /// POST /auth/request-otp
   static Future<Map<String, dynamic>> requestOtp(String phone) async {
     final url = Uri.parse('$baseUrl/auth/request-otp');
+    final phoneToSend = _cleanPhone(phone);
     try {
       final response = await http.post(
         url,
         headers: _headers(),
-        body: jsonEncode({'phone': phone}),
-      );
+        body: jsonEncode({'phone': phoneToSend}),
+      ).timeout(const Duration(seconds: 6));
+
       final data = jsonDecode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         return data as Map<String, dynamic>;
@@ -37,7 +47,7 @@ class ApiService {
     } catch (e) {
       return {
         'success': false,
-        'message': 'Network error: ${e.toString()}',
+        'message': 'Network timeout or connection error.',
       };
     }
   }
@@ -45,12 +55,14 @@ class ApiService {
   /// POST /auth/verify-otp
   static Future<Map<String, dynamic>> verifyOtp(String phone, String otp) async {
     final url = Uri.parse('$baseUrl/auth/verify-otp');
+    final phoneToSend = _cleanPhone(phone);
     try {
       final response = await http.post(
         url,
         headers: _headers(),
-        body: jsonEncode({'phone': phone, 'otp': otp}),
-      );
+        body: jsonEncode({'phone': phoneToSend, 'otp': otp}),
+      ).timeout(const Duration(seconds: 6));
+
       final data = jsonDecode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         return data as Map<String, dynamic>;
@@ -63,7 +75,7 @@ class ApiService {
     } catch (e) {
       return {
         'success': false,
-        'message': 'Network error: ${e.toString()}',
+        'message': 'Network timeout or connection error.',
       };
     }
   }
@@ -77,24 +89,26 @@ class ApiService {
     required bool isOwner,
   }) async {
     final url = Uri.parse('$baseUrl/auth/register');
+    final phoneToSend = _cleanPhone(phone);
     try {
       final response = await http.post(
         url,
         headers: _headers(),
         body: jsonEncode({
           'name': name,
-          'phone': phone,
+          'phone': phoneToSend,
           'society': society,
           'flat': flat,
           'is_owner': isOwner,
         }),
-      );
+      ).timeout(const Duration(seconds: 6));
+
       final data = jsonDecode(response.body);
       return data as Map<String, dynamic>;
     } catch (e) {
       return {
         'success': false,
-        'message': 'Network error: ${e.toString()}',
+        'message': 'Network timeout or connection error.',
       };
     }
   }

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/models/role_enum.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../features/admin/screens/admin_owner_home_screen.dart';
+import '../../features/admin/screens/hr_users_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/otp_verify_screen.dart';
@@ -235,12 +236,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // D. Admin Screens (D1 - D7)
       GoRoute(
         path: '/admin-hr',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'D2',
-          screenTitle: 'HR: Users List',
-          category: 'D. Admin',
-          description: 'Search, filter users by role',
-        ),
+        builder: (context, state) => const HrUsersScreen(),
       ),
       GoRoute(
         path: '/admin-roles',
