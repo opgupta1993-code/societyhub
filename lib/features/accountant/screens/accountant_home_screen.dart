@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/role_switcher_chip.dart';
 
 class AccountantHomeScreen extends ConsumerStatefulWidget {
   const AccountantHomeScreen({super.key});
@@ -57,6 +58,7 @@ class _AccountantHomeScreenState extends ConsumerState<AccountantHomeScreen> {
           ],
         ),
         actions: [
+          const RoleSwitcherChip(),
           IconButton(
             icon: const Icon(Icons.article_outlined, color: AppColors.ink),
             onPressed: () => context.push('/accountant-reports'),

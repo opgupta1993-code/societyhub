@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/role_switcher_chip.dart';
 
 class CommitteeHomeScreen extends ConsumerStatefulWidget {
   const CommitteeHomeScreen({super.key});
@@ -57,6 +58,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
           ],
         ),
         actions: [
+          const RoleSwitcherChip(),
           IconButton(
             icon: const Icon(Icons.notifications_outlined, color: AppColors.ink),
             onPressed: () => context.push('/notifications'),

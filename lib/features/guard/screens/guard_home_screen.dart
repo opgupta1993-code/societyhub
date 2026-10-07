@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/role_switcher_chip.dart';
 
 class GuardHomeScreen extends ConsumerStatefulWidget {
   const GuardHomeScreen({super.key});
@@ -157,6 +158,7 @@ class _GuardHomeScreenState extends ConsumerState<GuardHomeScreen> {
           ],
         ),
         actions: [
+          const RoleSwitcherChip(),
           IconButton(
             icon: const Icon(Icons.person_outline, color: AppColors.ink),
             onPressed: () => context.push('/profile'),

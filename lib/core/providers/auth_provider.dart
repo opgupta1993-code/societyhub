@@ -126,8 +126,12 @@ class AuthNotifier extends Notifier<AuthState> {
         final isRegistered = !isNullOrInvalidRoleId && userData['uid'] != null;
 
         if (isRegistered) {
-          final activeRole = UserRole.fromRoleId(rawRoleId, rawRole);
-          final int parsedRoleId = (int.tryParse(rawRoleId.toString()) ?? (activeRole == UserRole.admin ? 1 : 2));
+          final availableRoles = _parseUserAvailableRoles(userData);
+          final activeRole = availableRoles.isNotEmpty
+              ? availableRoles.first
+              : UserRole.fromRoleId(rawRoleId, rawRole);
+
+          final int parsedRoleId = activeRole.roleId;
           final isOwnerRole = parsedRoleId == 1 || activeRole == UserRole.admin;
 
           final user = UserModel(
@@ -139,7 +143,7 @@ class AuthNotifier extends Notifier<AuthState> {
             roleId: parsedRoleId,
             isOwner: isOwnerRole,
             activeRole: activeRole,
-            availableRoles: UserRole.values.toList(),
+            availableRoles: availableRoles,
           );
 
           state = AuthState(
@@ -235,6 +239,45 @@ class AuthNotifier extends Notifier<AuthState> {
 
   void logout() {
     state = const AuthState(isAuthenticated: false, user: null);
+  }
+
+  List<UserRole> _parseUserAvailableRoles(Map<String, dynamic> userData) {
+    final Set<UserRole> roleSet = {};
+
+    final rawRoleIds = userData['role_ids'] ?? userData['role_id'];
+    if (rawRoleIds != null) {
+      if (rawRoleIds is List) {
+        for (final item in rawRoleIds) {
+          roleSet.add(UserRole.fromRoleId(item));
+        }
+      } else if (rawRoleIds is String && rawRoleIds.contains(',')) {
+        final parts = rawRoleIds.split(',');
+        for (final part in parts) {
+          roleSet.add(UserRole.fromRoleId(part.trim()));
+        }
+      } else {
+        roleSet.add(UserRole.fromRoleId(rawRoleIds));
+      }
+    }
+
+    final rawRoles = userData['roles'];
+    if (rawRoles != null && rawRoles is List) {
+      for (final item in rawRoles) {
+        if (item is Map) {
+          final rId = item['role_id'] ?? item['id'];
+          final rCode = item['code'] ?? item['name'] ?? item['role'];
+          roleSet.add(UserRole.fromRoleId(rId, rCode?.toString()));
+        } else {
+          roleSet.add(UserRole.fromCode(item.toString()));
+        }
+      }
+    }
+
+    if (roleSet.isEmpty) {
+      return UserRole.values.toList();
+    }
+
+    return roleSet.toList();
   }
 }
 

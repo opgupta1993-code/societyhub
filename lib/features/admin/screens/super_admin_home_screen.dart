@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/role_switcher_chip.dart';
 
 class SuperAdminHomeScreen extends ConsumerStatefulWidget {
   const SuperAdminHomeScreen({super.key});
@@ -135,6 +136,7 @@ class _SuperAdminHomeScreenState extends ConsumerState<SuperAdminHomeScreen> {
           ],
         ),
         actions: [
+          const RoleSwitcherChip(),
           IconButton(
             icon: const Icon(Icons.tune_rounded, color: AppColors.ink),
             onPressed: () => context.push('/admin-settings'),

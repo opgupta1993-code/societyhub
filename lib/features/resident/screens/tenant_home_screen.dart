@@ -7,6 +7,7 @@ import '../../../core/providers/auth_provider.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/language_selection_modal.dart';
 import '../../../shared/widgets/logout_dialog.dart';
+import '../../../shared/widgets/role_switcher_chip.dart';
 
 /// Screen: Tenant Home Dashboard (from wireframe image)
 class TenantHomeScreen extends ConsumerStatefulWidget {
@@ -71,6 +72,8 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                   ),
                   Row(
                     children: [
+                      const RoleSwitcherChip(),
+                      const SizedBox(width: 8),
                       // Language Switcher Globe Button
                       GestureDetector(
                         onTap: () => showLanguageSelectionSheet(context, ref),
