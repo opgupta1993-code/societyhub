@@ -8,6 +8,7 @@ import '../../features/admin/screens/admin_owner_home_screen.dart';
 import '../../features/admin/screens/hr_users_screen.dart';
 import '../../features/admin/screens/assign_role_screen.dart';
 import '../../features/admin/screens/manager_permissions_screen.dart';
+import '../../features/admin/screens/collections_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/otp_verify_screen.dart';
@@ -318,12 +319,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/accountant-collections',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'F3',
-          screenTitle: 'Collections & Ledger',
-          category: 'F. Accountant',
-          description: 'Paid, pending, overdue, manual cash entry, send payment reminders',
-        ),
+        builder: (context, state) => const CollectionsScreen(),
       ),
       GoRoute(
         path: '/accountant-expenses',
