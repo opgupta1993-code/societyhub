@@ -6,6 +6,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/language_selection_modal.dart';
+import '../../../shared/widgets/logout_dialog.dart';
 
 /// Screen: Admin / Owner Home Dashboard (matches wireframe image 2 exactly)
 class AdminOwnerHomeScreen extends ConsumerStatefulWidget {
@@ -88,6 +89,23 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
                         ),
                       ),
                       const SizedBox(width: 8),
+                      // Logout Button (Light Red background)
+                      GestureDetector(
+                        onTap: () => showLogoutConfirmationDialog(context, ref),
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFFEE2E2), // Light red container
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.logout_rounded,
+                            color: Color(0xFFEF4444), // Red logout icon
+                            size: 20,
+                          ),
+                        ),
+                      ),
                       // Notification Bell Badge (Light Amber background)
                       GestureDetector(
                         onTap: () => context.push('/notifications'),
