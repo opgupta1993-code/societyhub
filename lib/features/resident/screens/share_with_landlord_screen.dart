@@ -85,8 +85,13 @@ class _ShareWithLandlordScreenState extends ConsumerState<ShareWithLandlordScree
         titleSpacing: 0,
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await Future.delayed(const Duration(milliseconds: 600));
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -246,6 +251,7 @@ class _ShareWithLandlordScreenState extends ConsumerState<ShareWithLandlordScree
           ),
         ),
       ),
+    ),
     );
   }
 

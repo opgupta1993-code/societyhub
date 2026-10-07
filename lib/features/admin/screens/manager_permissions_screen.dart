@@ -109,14 +109,20 @@ class _ManagerPermissionsScreenState extends ConsumerState<ManagerPermissionsScr
 
             // Scrollable Permissions List
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                itemCount: _permissions.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final item = _permissions[index];
-                  return _buildPermissionCard(item);
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await Future.delayed(const Duration(milliseconds: 600));
                 },
+                child: ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                  itemCount: _permissions.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final item = _permissions[index];
+                    return _buildPermissionCard(item);
+                  },
+                ),
               ),
             ),
 

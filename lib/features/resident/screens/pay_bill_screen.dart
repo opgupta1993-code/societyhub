@@ -59,8 +59,13 @@ class _PayBillScreenState extends State<PayBillScreen> {
         title: Text('Oct 2026 bill',
             style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(const Duration(milliseconds: 600));
+        },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
         children: [
           AppCard(
             child: Column(
@@ -110,6 +115,7 @@ class _PayBillScreenState extends State<PayBillScreen> {
             ),
         ],
       ),
+    ),
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.all(16),
         child: FilledButton(

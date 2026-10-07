@@ -21,10 +21,15 @@ class ProfileScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('My Profile & Settings (A5)'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(const Duration(milliseconds: 600));
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
             // User Avatar & Info Header
             Center(
               child: Column(
@@ -175,6 +180,7 @@ class ProfileScreen extends ConsumerWidget {
           ],
         ),
       ),
+    ),
     );
   }
 

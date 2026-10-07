@@ -107,22 +107,28 @@ class _AssignRoleScreenState extends ConsumerState<AssignRoleScreen> {
             ),
 
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    // Target User Card (Top)
-                    _buildTargetUserCard(),
-                    const SizedBox(height: 20),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await Future.delayed(const Duration(milliseconds: 600));
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      // Target User Card (Top)
+                      _buildTargetUserCard(),
+                      const SizedBox(height: 20),
 
-                    // List of Selectable Roles
-                    ..._roles.map((role) => Padding(
-                          padding: const EdgeInsets.only(bottom: 14),
-                          child: _buildRoleCard(role),
-                        )),
+                      // List of Selectable Roles
+                      ..._roles.map((role) => Padding(
+                            padding: const EdgeInsets.only(bottom: 14),
+                            child: _buildRoleCard(role),
+                          )),
 
-                    const SizedBox(height: 16),
-                  ],
+                      const SizedBox(height: 16),
+                    ],
+                  ),
                 ),
               ),
             ),
