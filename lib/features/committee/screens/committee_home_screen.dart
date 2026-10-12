@@ -114,7 +114,7 @@ class _CommitteeHomeScreenState extends ConsumerState<CommitteeHomeScreen> {
                   subtitle: 'Schedule meetings, publish agenda & recorded minutes',
                   icon: Icons.groups_rounded,
                   color: Colors.brown,
-                  onTap: () => context.push('/notices'),
+                  onTap: () => context.push('/committee-meetings'),
                 ),
                 const SizedBox(height: 12),
 

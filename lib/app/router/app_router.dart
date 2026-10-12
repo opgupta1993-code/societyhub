@@ -19,7 +19,6 @@ import '../../features/auth/screens/otp_verify_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/common/screens/notifications_screen.dart';
 import '../../features/common/screens/profile_screen.dart';
-import '../../features/common/screens/feature_placeholder_screen.dart';
 import '../../features/resident/screens/tenant_home_screen.dart';
 import '../../features/resident/screens/pay_bill_screen.dart';
 import '../../features/resident/screens/rent_payments_screen.dart';
@@ -41,6 +40,16 @@ import '../../features/resident/screens/important_contacts_screen.dart';
 import '../../features/guard/screens/guard_walkin_screen.dart';
 import '../../features/accountant/screens/generate_bills_screen.dart';
 import '../../features/accountant/screens/log_expense_screen.dart';
+import '../../features/resident/screens/visitor_log_screen.dart';
+import '../../features/resident/screens/help_support_screen.dart';
+import '../../features/resident/screens/records_hub_screen.dart';
+import '../../features/resident/screens/charges_breakup_screen.dart';
+import '../../features/committee/screens/committee_meetings_screen.dart';
+import '../../features/guard/screens/guard_staff_check_screen.dart';
+import '../../features/guard/screens/guard_approval_status_screen.dart';
+import '../../features/manager/screens/manager_approvals_screen.dart';
+import '../../features/manager/screens/manager_complaints_screen.dart';
+import '../../features/manager/screens/create_notice_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = ValueNotifier<bool>(false);
@@ -146,12 +155,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/visitor-log',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B4',
-          screenTitle: 'Visitor Log',
-          category: 'B. Resident',
-          description: 'In/Out history, allow or deny gate entry requests',
-        ),
+        builder: (context, state) => const VisitorLogScreen(), // B4 / H4 Visitor Log
       ),
       GoRoute(
         path: '/notices',
@@ -191,23 +195,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/help',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B14',
-          screenTitle: 'Help & Support',
-          category: 'B. Resident',
-          description: 'Contact society office, ticketing desk',
-        ),
+        builder: (context, state) => const HelpSupportScreen(), // B14 Help & Support
       ),
 
       // C. Rent, Records & Sharing (C1 - C11)
       GoRoute(
         path: '/records-hub',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'C1',
-          screenTitle: 'My Records Hub',
-          category: 'C. Records & Sharing',
-          description: 'Rent, utility charges, payments, issues summary',
-        ),
+        builder: (context, state) => const RecordsHubScreen(), // C1 My Records Hub
       ),
       GoRoute(
         path: '/rent',
@@ -215,12 +209,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/charges-breakup',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'C4',
-          screenTitle: 'Charges Breakup',
-          category: 'C. Records & Sharing',
-          description: 'Maintenance, water, parking, late fee details',
-        ),
+        builder: (context, state) => const ChargesBreakupScreen(), // C4 Charges Breakup
       ),
       GoRoute(
         path: '/shared-access',
@@ -262,30 +251,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       // E. Manager Screens (E1 - E5)
       GoRoute(
         path: '/manager-complaints',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'E2',
-          screenTitle: 'Complaint Queue',
-          category: 'E. Manager',
-          description: 'Filter complaints, assign priority & dispatch staff',
-        ),
+        builder: (context, state) => const ManagerComplaintsScreen(), // E2 / E3 Complaint Queue & Dispatch
       ),
       GoRoute(
         path: '/manager-approvals',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'E4',
-          screenTitle: 'Booking Approvals',
-          category: 'E. Manager',
-          description: 'Approve or reject amenity booking requests & calendar slots',
-        ),
+        builder: (context, state) => const ManagerApprovalsScreen(), // E4 Booking Approvals
       ),
       GoRoute(
         path: '/manager-create-notice',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'E5',
-          screenTitle: 'Create Notice',
-          category: 'E. Manager',
-          description: 'Audience selection, attachments, push notifications',
-        ),
+        builder: (context, state) => const CreateNoticeScreen(), // E5 Create Notice
       ),
 
       // F. Accountant Screens (F1 - F5)
@@ -313,12 +287,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/committee-meetings',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'G4',
-          screenTitle: 'Meetings & Minutes',
-          category: 'G. Committee',
-          description: 'Schedule meetings, RSVP tracking, MoM upload',
-        ),
+        builder: (context, state) => const CommitteeMeetingsScreen(), // G4 Meetings & MoM
       ),
 
       // H. Security Guard Desk (H1 - H5)
@@ -328,30 +297,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/guard-approval-status',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'H3',
-          screenTitle: 'Live Approval Monitor',
-          category: 'H. Security Guard',
-          description: 'Real-time resident approval or denial status indicator',
-        ),
+        builder: (context, state) => const GuardApprovalStatusScreen(), // H3 Approval Status
       ),
       GoRoute(
         path: '/guard-log',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'H4',
-          screenTitle: 'Visitor In/Out Logbook',
-          category: 'H. Security Guard',
-          description: 'Track inside visitors, mark exit timestamp',
-        ),
+        builder: (context, state) => const VisitorLogScreen(), // H4 Visitor Log
       ),
       GoRoute(
         path: '/guard-vehicle-check',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'H5',
-          screenTitle: 'Staff & Vehicle Check',
-          category: 'H. Security Guard',
-          description: 'Daily staff attendance, vehicle check, emergency SOS alert trigger',
-        ),
+        builder: (context, state) => const GuardStaffCheckScreen(), // H5 Staff & Vehicle Check
       ),
       GoRoute(
         path: '/amenity-booking',

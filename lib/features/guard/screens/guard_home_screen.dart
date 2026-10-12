@@ -256,6 +256,31 @@ class _GuardHomeScreenState extends ConsumerState<GuardHomeScreen> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 12),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildQuickActionCard(
+                        icon: Icons.sensors_rounded,
+                        title: 'Approval Monitor',
+                        subtitle: 'Resident live approvals',
+                        color: Colors.teal,
+                        onTap: () => context.push('/guard-approval-status'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildQuickActionCard(
+                        icon: Icons.history_rounded,
+                        title: 'Visitor Logbook',
+                        subtitle: 'In/Out records & exits',
+                        color: Colors.purple,
+                        onTap: () => context.push('/guard-log'),
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 24),
 
                 // Live Gate Activity Header

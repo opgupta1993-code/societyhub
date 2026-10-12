@@ -5,18 +5,21 @@ import '../../app/theme/app_colors.dart';
 class AppCard extends StatelessWidget {
   final Widget child;
   final EdgeInsets padding;
+  final EdgeInsets? margin;
   final Color? borderColor;
 
   const AppCard({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(16),
+    this.margin,
     this.borderColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: margin,
       padding: padding,
       decoration: BoxDecoration(
         color: Colors.white,

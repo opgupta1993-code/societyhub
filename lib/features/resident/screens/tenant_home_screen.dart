@@ -198,55 +198,73 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: AppCard(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Society dues',
-                            style: text.bodySmall?.copyWith(
-                              color: AppColors.mute,
-                              fontSize: 13,
+                    child: GestureDetector(
+                      onTap: () => context.push('/charges-breakup'),
+                      child: AppCard(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Society dues',
+                                  style: text.bodySmall?.copyWith(
+                                    color: AppColors.mute,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const Icon(Icons.arrow_forward_ios_rounded, size: 10, color: AppColors.mute),
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            '₹3,450',
-                            style: text.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.ink,
-                              fontSize: 22,
+                            const SizedBox(height: 6),
+                            Text(
+                              '₹3,450',
+                              style: text.titleLarge?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.ink,
+                                fontSize: 22,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: AppCard(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Agreement ends',
-                            style: text.bodySmall?.copyWith(
-                              color: AppColors.mute,
-                              fontSize: 13,
+                    child: GestureDetector(
+                      onTap: () => context.push('/documents'),
+                      child: AppCard(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Agreement ends',
+                                  style: text.bodySmall?.copyWith(
+                                    color: AppColors.mute,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const Icon(Icons.arrow_forward_ios_rounded, size: 10, color: AppColors.mute),
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            "Mar '27",
-                            style: text.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.ink,
-                              fontSize: 22,
+                            const SizedBox(height: 6),
+                            Text(
+                              "Mar '27",
+                              style: text.titleLarge?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.ink,
+                                fontSize: 22,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -313,6 +331,38 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                     icon: Icons.phone_in_talk_outlined,
                     label: 'Contacts',
                     onTap: () => context.push('/contacts'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              // Quick Action Tiles Row 3 (Family, Vehicles, Records Hub, Help & Support)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _actionTile(
+                    context,
+                    icon: Icons.people_outline_rounded,
+                    label: 'Family',
+                    onTap: () => context.push('/family'),
+                  ),
+                  _actionTile(
+                    context,
+                    icon: Icons.directions_car_outlined,
+                    label: 'Vehicles',
+                    onTap: () => context.push('/vehicles'),
+                  ),
+                  _actionTile(
+                    context,
+                    icon: Icons.folder_shared_outlined,
+                    label: 'Records',
+                    onTap: () => context.push('/records-hub'),
+                  ),
+                  _actionTile(
+                    context,
+                    icon: Icons.support_agent_rounded,
+                    label: 'Help',
+                    onTap: () => context.push('/help'),
                   ),
                 ],
               ),

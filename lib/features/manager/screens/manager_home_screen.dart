@@ -106,7 +106,7 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
                   icon: Icons.build_circle_rounded,
                   color: Colors.red,
                   badgeText: '5 Open',
-                  onTap: () => context.push('/complaints'),
+                  onTap: () => context.push('/manager-complaints'),
                 ),
                 const SizedBox(height: 12),
 
@@ -116,7 +116,7 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
                   icon: Icons.check_circle_outline_rounded,
                   color: Colors.teal,
                   badgeText: '3 Pending',
-                  onTap: () => context.push('/amenity-booking'),
+                  onTap: () => context.push('/manager-approvals'),
                 ),
                 const SizedBox(height: 12),
 
@@ -126,7 +126,7 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
                   icon: Icons.campaign_rounded,
                   color: Colors.purple,
                   badgeText: 'New',
-                  onTap: () => context.push('/notices'),
+                  onTap: () => context.push('/manager-create-notice'),
                 ),
                 const SizedBox(height: 12),
 
