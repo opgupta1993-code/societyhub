@@ -174,7 +174,11 @@ class AuthNotifier extends Notifier<AuthState> {
           isLoading: false,
           error: displayMsg,
         );
-        return VerifyResult(VerifyStatus.needsRegistration, message: displayMsg);
+        if (isNotReg) {
+          return VerifyResult(VerifyStatus.needsRegistration, message: displayMsg);
+        } else {
+          return VerifyResult(VerifyStatus.error, message: displayMsg);
+        }
       }
     } catch (e) {
       state = state.copyWith(isLoading: false, error: 'Verification error');
