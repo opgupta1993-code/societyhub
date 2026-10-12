@@ -254,7 +254,7 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Quick Action Tiles (Issue, Visitors, Booking, Share)
+              // Quick Action Tiles Row 1 (Issue, Visitors, Booking, Share)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -281,6 +281,38 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                     icon: Icons.link_rounded,
                     label: 'Share',
                     onTap: () => context.push('/shared-access'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              // Quick Action Tiles Row 2 (Notices, Polls, Directory, Emergency Contacts)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _actionTile(
+                    context,
+                    icon: Icons.campaign_outlined,
+                    label: 'Notices',
+                    onTap: () => context.push('/notices'),
+                  ),
+                  _actionTile(
+                    context,
+                    icon: Icons.how_to_vote_outlined,
+                    label: 'Polls',
+                    onTap: () => context.push('/polls'),
+                  ),
+                  _actionTile(
+                    context,
+                    icon: Icons.contacts_outlined,
+                    label: 'Directory',
+                    onTap: () => context.push('/directory'),
+                  ),
+                  _actionTile(
+                    context,
+                    icon: Icons.phone_in_talk_outlined,
+                    label: 'Contacts',
+                    onTap: () => context.push('/contacts'),
                   ),
                 ],
               ),

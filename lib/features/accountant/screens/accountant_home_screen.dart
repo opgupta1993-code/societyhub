@@ -123,7 +123,7 @@ class _AccountantHomeScreenState extends ConsumerState<AccountantHomeScreen> {
                   subtitle: 'Issue maintenance bills to all 170 flats',
                   icon: Icons.receipt_long_rounded,
                   color: Colors.indigo,
-                  onTap: () => context.push('/dues'),
+                  onTap: () => context.push('/accountant-bills'),
                 ),
                 const SizedBox(height: 12),
 
@@ -132,7 +132,7 @@ class _AccountantHomeScreenState extends ConsumerState<AccountantHomeScreen> {
                   subtitle: 'Record operational bills, staff pay & repairs',
                   icon: Icons.request_quote_rounded,
                   color: Colors.purple,
-                  onTap: () => context.push('/accountant-reports'),
+                  onTap: () => context.push('/accountant-expenses'),
                 ),
               ],
             ),

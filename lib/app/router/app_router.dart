@@ -31,6 +31,16 @@ import '../../features/manager/screens/manager_home_screen.dart';
 import '../../features/accountant/screens/accountant_home_screen.dart';
 import '../../features/committee/screens/committee_home_screen.dart';
 import '../../features/guard/screens/guard_home_screen.dart';
+import '../../features/resident/screens/family_members_screen.dart';
+import '../../features/resident/screens/vehicles_screen.dart';
+import '../../features/resident/screens/notices_screen.dart';
+import '../../features/resident/screens/polls_screen.dart';
+import '../../features/resident/screens/amenity_booking_screen.dart';
+import '../../features/resident/screens/directory_screen.dart';
+import '../../features/resident/screens/important_contacts_screen.dart';
+import '../../features/guard/screens/guard_walkin_screen.dart';
+import '../../features/accountant/screens/generate_bills_screen.dart';
+import '../../features/accountant/screens/log_expense_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = ValueNotifier<bool>(false);
@@ -145,57 +155,27 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/notices',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B5',
-          screenTitle: 'Notice Board',
-          category: 'B. Resident',
-          description: 'Society notices, announcements, event RSVP',
-        ),
+        builder: (context, state) => const NoticesScreen(),
       ),
       GoRoute(
         path: '/polls',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B6',
-          screenTitle: 'Polls & Voting',
-          category: 'B. Resident',
-          description: 'Voting options, cast vote, view real-time percentage results',
-        ),
+        builder: (context, state) => const PollsScreen(),
       ),
       GoRoute(
         path: '/amenities',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B7',
-          screenTitle: 'Amenity Booking',
-          category: 'B. Resident',
-          description: 'Amenity list, date picker, slot selection, fee calculation',
-        ),
+        builder: (context, state) => const AmenityBookingScreen(),
       ),
       GoRoute(
         path: '/my-bookings',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B8',
-          screenTitle: 'My Bookings',
-          category: 'B. Resident',
-          description: 'Cancel or reschedule booked slots',
-        ),
+        builder: (context, state) => const AmenityBookingScreen(),
       ),
       GoRoute(
         path: '/directory',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B9',
-          screenTitle: 'Society Directory',
-          category: 'B. Resident',
-          description: 'Search residents, direct call/chat buttons',
-        ),
+        builder: (context, state) => const DirectoryScreen(),
       ),
       GoRoute(
         path: '/contacts',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B10',
-          screenTitle: 'Important Contacts',
-          category: 'B. Resident',
-          description: 'Security, plumber, electrician, emergency contacts',
-        ),
+        builder: (context, state) => const ImportantContactsScreen(),
       ),
       GoRoute(
         path: '/documents',
@@ -203,21 +183,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/family',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B12',
-          screenTitle: 'Family Members',
-          category: 'B. Resident',
-          description: 'Add, edit, or remove linked family members',
-        ),
+        builder: (context, state) => const FamilyMembersScreen(),
       ),
       GoRoute(
         path: '/vehicles',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B13',
-          screenTitle: 'My Vehicles',
-          category: 'B. Resident',
-          description: 'Add vehicles, parking slot mapping, RFID status',
-        ),
+        builder: (context, state) => const VehiclesScreen(),
       ),
       GoRoute(
         path: '/help',
@@ -321,12 +291,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // F. Accountant Screens (F1 - F5)
       GoRoute(
         path: '/accountant-bills',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'F2',
-          screenTitle: 'Generate Monthly Bills',
-          category: 'F. Accountant',
-          description: 'Batch generate maintenance bills by flat type & due date',
-        ),
+        builder: (context, state) => const GenerateBillsScreen(),
       ),
       GoRoute(
         path: '/accountant-collections',
@@ -334,12 +299,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/accountant-expenses',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'F4',
-          screenTitle: 'Log Expenses',
-          category: 'F. Accountant',
-          description: 'Add society expense with physical bill photo proof',
-        ),
+        builder: (context, state) => const LogExpenseScreen(),
       ),
       GoRoute(
         path: '/accountant-reports',
@@ -349,12 +309,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // G. Committee Screens (G1 - G4)
       GoRoute(
         path: '/committee-polls',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'G2',
-          screenTitle: 'Create Committee Poll',
-          category: 'G. Committee',
-          description: 'Question, options, target audience, end date setup',
-        ),
+        builder: (context, state) => const PollsScreen(),
       ),
       GoRoute(
         path: '/committee-meetings',
@@ -369,12 +324,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // H. Security Guard Desk (H1 - H5)
       GoRoute(
         path: '/guard-walkin',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'H2',
-          screenTitle: 'Walk-in Entry Gate Desk',
-          category: 'H. Security Guard',
-          description: 'Capture visitor photo, phone, flat destination, purpose',
-        ),
+        builder: (context, state) => const GuardWalkinScreen(),
       ),
       GoRoute(
         path: '/guard-approval-status',
@@ -405,12 +355,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/amenity-booking',
-        builder: (context, state) => const FeaturePlaceholderScreen(
-          screenId: 'B7',
-          screenTitle: 'Amenity Booking Approvals',
-          category: 'B. Resident & Manager',
-          description: 'Clubhouse, sports lawn slot booking & manager approvals',
-        ),
+        builder: (context, state) => const AmenityBookingScreen(),
       ),
     ],
   );
