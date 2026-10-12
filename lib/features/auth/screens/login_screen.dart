@@ -45,8 +45,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final phone = _formattedPhone();
 
     try {
-      // Trigger OTP Request (background API call)
-      final success = await ref.read(authProvider.notifier).requestOtp(phone);
+      // Trigger OTP Request with 6s timeout safety
+      final success = await ref
+          .read(authProvider.notifier)
+          .requestOtp(phone)
+          .timeout(
+            const Duration(seconds: 6),
+            onTimeout: () => false,
+          );
 
       if (!mounted) return;
 
@@ -55,7 +61,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       } else {
         final authError = ref.read(authProvider).error;
         setState(() {
-          _error = authError ?? 'Your mobile number is not registered. Please create your account.';
+          _error = authError ?? 'Unable to send OTP. Please try again.';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = 'Connection timed out or failed. Please try again.';
         });
       }
     } finally {
@@ -246,7 +258,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF0062E0),
+                          disabledBackgroundColor: const Color(0xFF0062E0),
                           foregroundColor: Colors.white,
+                          disabledForegroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
@@ -258,15 +272,45 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         onPressed: _isSubmitting ? null : _handleSendOtp,
                         child: _isSubmitting
-                            ? const SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
+                            ? const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.2,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    'Sending OTP...',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
                               )
                             : const Text('Send OTP'),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Center(
+                      child: TextButton(
+                        onPressed: () {
+                          context.push('/verify-otp', extra: _formattedPhone());
+                        },
+                        child: const Text(
+                          'Already have OTP? Verify directly →',
+                          style: TextStyle(
+                            color: Color(0xFF0062E0),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ],

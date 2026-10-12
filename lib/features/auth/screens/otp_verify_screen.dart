@@ -92,7 +92,14 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
     try {
       final result = await ref
           .read(authProvider.notifier)
-          .verifyOtpWithStatus(widget.phone, otp);
+          .verifyOtpWithStatus(widget.phone, otp)
+          .timeout(
+            const Duration(seconds: 6),
+            onTimeout: () => VerifyResult(
+              VerifyStatus.error,
+              message: 'Connection timed out. Please try again.',
+            ),
+          );
 
       if (!mounted) return;
 
@@ -111,6 +118,10 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
         context.push('/register', extra: widget.phone);
       } else {
         setState(() => _error = result.message ?? 'Invalid OTP code');
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _error = 'Network error or timeout. Please try again.');
       }
     } finally {
       if (mounted) {
@@ -243,7 +254,9 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0062E0),
+                    disabledBackgroundColor: const Color(0xFF0062E0),
                     foregroundColor: Colors.white,
+                    disabledForegroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -255,13 +268,27 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                   ),
                   onPressed: _isSubmitting ? null : _verifyOtp,
                   child: _isSubmitting
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
+                      ? const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.2,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Verifying...',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
                         )
                       : const Text('Verify and log in'),
                 ),

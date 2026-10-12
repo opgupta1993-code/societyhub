@@ -16,6 +16,13 @@ class ApiService {
     };
   }
 
+  static Map<String, String> _publicHeaders() {
+    return {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+  }
+
   static String _cleanPhone(String raw) {
     final digits = raw.replaceAll(RegExp(r'\D'), '');
     if (digits.length == 12 && digits.startsWith('91')) {
@@ -31,23 +38,32 @@ class ApiService {
     try {
       final response = await http.post(
         url,
-        headers: _headers(),
+        headers: _publicHeaders(),
         body: jsonEncode({'phone': phoneToSend}),
-      ).timeout(const Duration(seconds: 6));
+      ).timeout(const Duration(seconds: 5));
 
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return data as Map<String, dynamic>;
-      } else {
+      try {
+        final data = jsonDecode(response.body);
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          return data as Map<String, dynamic>;
+        } else {
+          return {
+            'success': false,
+            'message': (data is Map && data['message'] != null)
+                ? data['message']
+                : 'Server returned ${response.statusCode}',
+          };
+        }
+      } catch (_) {
         return {
           'success': false,
-          'message': data['message'] ?? 'Failed to send OTP (${response.statusCode})',
+          'message': 'Unexpected server response (${response.statusCode})',
         };
       }
     } catch (e) {
       return {
         'success': false,
-        'message': 'Network timeout or connection error.',
+        'message': 'Connection timed out. Please try again.',
       };
     }
   }
@@ -59,23 +75,32 @@ class ApiService {
     try {
       final response = await http.post(
         url,
-        headers: _headers(),
+        headers: _publicHeaders(),
         body: jsonEncode({'phone': phoneToSend, 'otp': otp}),
-      ).timeout(const Duration(seconds: 6));
+      ).timeout(const Duration(seconds: 5));
 
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return data as Map<String, dynamic>;
-      } else {
+      try {
+        final data = jsonDecode(response.body);
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          return data as Map<String, dynamic>;
+        } else {
+          return {
+            'success': false,
+            'message': (data is Map && data['message'] != null)
+                ? data['message']
+                : 'Invalid OTP code',
+          };
+        }
+      } catch (_) {
         return {
           'success': false,
-          'message': data['message'] ?? 'Invalid OTP code',
+          'message': 'Unexpected server response (${response.statusCode})',
         };
       }
     } catch (e) {
       return {
         'success': false,
-        'message': 'Network timeout or connection error.',
+        'message': 'Connection timed out. Please try again.',
       };
     }
   }

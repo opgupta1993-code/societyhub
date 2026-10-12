@@ -302,7 +302,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0062E0),
+                    disabledBackgroundColor: const Color(0xFF0062E0),
                     foregroundColor: Colors.white,
+                    disabledForegroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -314,13 +316,27 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   onPressed: authState.isLoading ? null : _handleRegister,
                   child: authState.isLoading
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
+                      ? const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.2,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Creating account...',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
                         )
                       : const Text('Register'),
                 ),
