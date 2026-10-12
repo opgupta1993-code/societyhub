@@ -235,10 +235,10 @@ class _ManagerComplaintsScreenState extends State<ManagerComplaintsScreen> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7F4),
+      backgroundColor: AppColors.bg,
       appBar: AppBar(
         title: const Text(
-          'Complaints Queue (E2/E3)',
+          'Complaints Queue & Dispatch',
           style: TextStyle(fontWeight: FontWeight.w800, color: AppColors.ink),
         ),
         backgroundColor: Colors.white,

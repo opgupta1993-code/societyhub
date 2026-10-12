@@ -73,10 +73,10 @@ class _CreateNoticeScreenState extends State<CreateNoticeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7F4),
+      backgroundColor: AppColors.bg,
       appBar: AppBar(
         title: const Text(
-          'Create Society Notice (E5)',
+          'Create Society Notice',
           style: TextStyle(fontWeight: FontWeight.w800, color: AppColors.ink),
         ),
         backgroundColor: Colors.white,

@@ -158,10 +158,10 @@ class _ManagerApprovalsScreenState extends State<ManagerApprovalsScreen> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7F4),
+      backgroundColor: AppColors.bg,
       appBar: AppBar(
         title: const Text(
-          'Booking Approvals (E4)',
+          'Booking Approvals',
           style: TextStyle(fontWeight: FontWeight.w800, color: AppColors.ink),
         ),
         backgroundColor: Colors.white,
