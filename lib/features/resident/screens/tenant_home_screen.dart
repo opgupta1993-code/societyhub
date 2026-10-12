@@ -74,41 +74,6 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                     children: [
                       const RoleSwitcherChip(),
                       const SizedBox(width: 8),
-                      // Language Switcher Globe Button
-                      GestureDetector(
-                        onTap: () => showLanguageSelectionSheet(context, ref),
-                        child: Container(
-                          width: 44,
-                          height: 44,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.language_rounded,
-                            color: AppColors.primary,
-                            size: 22,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      // Logout Button (Light Red background)
-                      GestureDetector(
-                        onTap: () => showLogoutConfirmationDialog(context, ref),
-                        child: Container(
-                          width: 44,
-                          height: 44,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFFEE2E2), // Light red container
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.logout_rounded,
-                            color: Color(0xFFEF4444), // Red logout icon
-                            size: 20,
-                          ),
-                        ),
-                      ),
                       // Notification Bell
                       InkWell(
                         onTap: () => context.push('/notifications'),
@@ -124,6 +89,25 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                             Icons.notifications_active_rounded,
                             color: AppColors.amber,
                             size: 22,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Three Dots More Menu (•••)
+                      InkWell(
+                        onTap: () => _showMoreMenu(context),
+                        borderRadius: BorderRadius.circular(24),
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.more_horiz_rounded,
+                            color: AppColors.ink,
+                            size: 24,
                           ),
                         ),
                       ),
@@ -302,70 +286,6 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-
-              // Quick Action Tiles Row 2 (Notices, Polls, Directory, Emergency Contacts)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _actionTile(
-                    context,
-                    icon: Icons.campaign_outlined,
-                    label: 'Notices',
-                    onTap: () => context.push('/notices'),
-                  ),
-                  _actionTile(
-                    context,
-                    icon: Icons.how_to_vote_outlined,
-                    label: 'Polls',
-                    onTap: () => context.push('/polls'),
-                  ),
-                  _actionTile(
-                    context,
-                    icon: Icons.contacts_outlined,
-                    label: 'Directory',
-                    onTap: () => context.push('/directory'),
-                  ),
-                  _actionTile(
-                    context,
-                    icon: Icons.phone_in_talk_outlined,
-                    label: 'Contacts',
-                    onTap: () => context.push('/contacts'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // Quick Action Tiles Row 3 (Family, Vehicles, Records Hub, Help & Support)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _actionTile(
-                    context,
-                    icon: Icons.people_outline_rounded,
-                    label: 'Family',
-                    onTap: () => context.push('/family'),
-                  ),
-                  _actionTile(
-                    context,
-                    icon: Icons.directions_car_outlined,
-                    label: 'Vehicles',
-                    onTap: () => context.push('/vehicles'),
-                  ),
-                  _actionTile(
-                    context,
-                    icon: Icons.folder_shared_outlined,
-                    label: 'Records',
-                    onTap: () => context.push('/records-hub'),
-                  ),
-                  _actionTile(
-                    context,
-                    icon: Icons.support_agent_rounded,
-                    label: 'Help',
-                    onTap: () => context.push('/help'),
-                  ),
-                ],
-              ),
               const SizedBox(height: 16),
 
               // Tenancy Info Card
@@ -515,6 +435,104 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showMoreMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Society Services',
+                      style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.ink),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close_rounded),
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ListTile(
+                  leading: const Icon(Icons.campaign_outlined, color: AppColors.primary),
+                  title: const Text('Notices & Circulars', style: TextStyle(fontWeight: FontWeight.w700)),
+                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    context.push('/notices');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.how_to_vote_outlined, color: AppColors.primary),
+                  title: const Text('Polls & Voting', style: TextStyle(fontWeight: FontWeight.w700)),
+                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    context.push('/polls');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.contacts_outlined, color: AppColors.primary),
+                  title: const Text('Directory & Contacts', style: TextStyle(fontWeight: FontWeight.w700)),
+                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    context.push('/directory');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.people_outline_rounded, color: AppColors.primary),
+                  title: const Text('Family Members & Vehicles', style: TextStyle(fontWeight: FontWeight.w700)),
+                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    context.push('/family');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.support_agent_rounded, color: AppColors.primary),
+                  title: const Text('Help & Support', style: TextStyle(fontWeight: FontWeight.w700)),
+                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    context.push('/help');
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.language_rounded, color: AppColors.primary),
+                  title: const Text('Language / भाषा', style: TextStyle(fontWeight: FontWeight.w700)),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    showLanguageSelectionSheet(context, ref);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.logout_rounded, color: Colors.red),
+                  title: const Text('Log Out', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.red)),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    showLogoutConfirmationDialog(context, ref);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -99,8 +99,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomRight,
                     colors: [
-                      Color(0xFF0068D8), // Deep Blue
-                      Color(0xFF00A896), // Vibrant Teal
+                      AppColors.primary,
+                      Color(0xFF1B806C),
                     ],
                   ),
                 ),
@@ -236,8 +236,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           width: double.infinity,
                           child: OutlinedButton.icon(
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: const Color(0xFF0062E0),
-                              side: const BorderSide(color: Color(0xFF0062E0), width: 1.5),
+                              foregroundColor: AppColors.primary,
+                              side: const BorderSide(color: AppColors.primary, width: 1.5),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
@@ -257,8 +257,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       height: 52,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0062E0),
-                          disabledBackgroundColor: const Color(0xFF0062E0),
+                          backgroundColor: AppColors.primary,
+                          disabledBackgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           disabledForegroundColor: Colors.white,
                           elevation: 0,
@@ -306,7 +306,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         child: const Text(
                           'Already have OTP? Verify directly →',
                           style: TextStyle(
-                            color: Color(0xFF0062E0),
+                            color: AppColors.primary,
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
                           ),
@@ -339,7 +339,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       TextSpan(
                         text: 'Register',
                         style: TextStyle(
-                          color: Color(0xFF0062E0),
+                          color: AppColors.primary,
                           fontWeight: FontWeight.w800,
                         ),
                       ),

@@ -74,41 +74,6 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
                     children: [
                       const RoleSwitcherChip(),
                       const SizedBox(width: 8),
-                      // Language Switcher Globe Button
-                      GestureDetector(
-                        onTap: () => showLanguageSelectionSheet(context, ref),
-                        child: Container(
-                          width: 44,
-                          height: 44,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.language_rounded,
-                            color: AppColors.primary,
-                            size: 22,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      // Logout Button (Light Red background)
-                      GestureDetector(
-                        onTap: () => showLogoutConfirmationDialog(context, ref),
-                        child: Container(
-                          width: 44,
-                          height: 44,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFFEE2E2), // Light red container
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.logout_rounded,
-                            color: Color(0xFFEF4444), // Red logout icon
-                            size: 20,
-                          ),
-                        ),
-                      ),
                       // Notification Bell Badge (Light Amber background)
                       GestureDetector(
                         onTap: () => context.push('/notifications'),
@@ -123,6 +88,24 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
                             Icons.notifications_rounded,
                             color: Color(0xFFD97706), // Gold bell icon
                             size: 22,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Three Dots More Menu (•••)
+                      GestureDetector(
+                        onTap: () => _showAdminMoreMenu(context),
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.more_horiz_rounded,
+                            color: AppColors.ink,
+                            size: 24,
                           ),
                         ),
                       ),
@@ -434,6 +417,86 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showAdminMoreMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Admin Management',
+                      style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.ink),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close_rounded),
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ListTile(
+                  leading: const Icon(Icons.security_rounded, color: AppColors.primary),
+                  title: const Text('Roles & Permissions (D5)', style: TextStyle(fontWeight: FontWeight.w700)),
+                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    context.push('/admin-roles');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.history_edu_rounded, color: AppColors.primary),
+                  title: const Text('Audit Log (D7)', style: TextStyle(fontWeight: FontWeight.w700)),
+                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    context.push('/admin-audit');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.settings_suggest_rounded, color: AppColors.primary),
+                  title: const Text('Society Settings (D6)', style: TextStyle(fontWeight: FontWeight.w700)),
+                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    context.push('/admin-settings');
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.language_rounded, color: AppColors.primary),
+                  title: const Text('Language / भाषा', style: TextStyle(fontWeight: FontWeight.w700)),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    showLanguageSelectionSheet(context, ref);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.logout_rounded, color: Colors.red),
+                  title: const Text('Log Out', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.red)),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    showLogoutConfirmationDialog(context, ref);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

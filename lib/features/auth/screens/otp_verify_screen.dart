@@ -207,7 +207,7 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                             TextSpan(
                               text: '00:${_secondsRemaining.toString().padLeft(2, '0')}',
                               style: const TextStyle(
-                                color: Color(0xFF0062E0),
+                                color: AppColors.primary,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -228,7 +228,7 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                         child: const Text(
                           'Resend code now',
                           style: TextStyle(
-                            color: Color(0xFF0062E0),
+                            color: AppColors.primary,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -253,8 +253,8 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                 height: 52,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0062E0),
-                    disabledBackgroundColor: const Color(0xFF0062E0),
+                    backgroundColor: AppColors.primary,
+                    disabledBackgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     disabledForegroundColor: Colors.white,
                     elevation: 0,
