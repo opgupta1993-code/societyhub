@@ -2,15 +2,18 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'https://bahikhata.webenhancehub.com/api/v1';
+  /// Base Root URL of SocietyHub backend
+  static const String rootUrl = 'https://bahikhata.webenhancehub.com/societyhub/';
+
+  /// Base API URL for endpoints (auth, complaints, bookings, bills)
+  static const String baseUrl = 'https://bahikhata.webenhancehub.com/societyhub/api/v1';
 
   static const String defaultBearerToken =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhaGlraGF0YS53ZWJlbmhhbmNlaHViLmNvbS8iLCJhdWQiOiJodHRwczovL2JhaGlraGF0YS53ZWJlbmhhbmNlaHViLmNvbS8iLCJpYXQiOjE3OTEyNzY4MjksImV4cCI6MTc5MTM2MzIyOSwiZGF0YSI6eyJ1aWQiOiJ1c3JfNzU0MyIsIm5hbWUiOiJPd25lciA4NSIsInBob25lIjoiKzkxODEwOTk1NzY3MiIsInJvbGUiOiJvd25lciIsInNob3BfaWQiOiJzaG9wX2tyaXNoYW5fOTkxIn19.S4yj9WyTIJtyJAf_-fw3CRPbgDlCRatj0YMfyYyTLDY';
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhaGlraGF0YS53ZWJlbmhhbmNlaHViLmNvbS9zb2NpZXR5aHViLyIsImF1ZCI6Imh0dHBzOi8vYmFoaWtoYXRhLndlYmVuaGFuY2VodWIuY29tL3NvY2lldHlodWIvIiwiaWF0IjoxNzkxODkxNzA3LCJleHAiOjE3OTE5NzgxMDcsImRhdGEiOnsidWlkIjoidXNyXzc1NDMiLCJuYW1lIjoiT3duZXIgODUiLCJwaG9uZSI6Iis5MTgxMDk5NTc2NzIiLCJyb2xlIjoib3duZXIiLCJyb2xlX2lkIjoiMSIsInNob3BfaWQiOiJzaG9wX2tyaXNoYW5fOTkxIn19.BaBH8buFSa0VGcMgIEpGnVKLKgLZWlzR4zBJ9Zk1A38';
 
   static Map<String, String> _headers([String? token]) {
     final authToken = (token != null && token.isNotEmpty) ? token : defaultBearerToken;
     return {
-      'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer $authToken',
     };
@@ -18,7 +21,6 @@ class ApiService {
 
   static Map<String, String> _publicHeaders() {
     return {
-      'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
   }
@@ -39,8 +41,8 @@ class ApiService {
       final response = await http.post(
         url,
         headers: _publicHeaders(),
-        body: jsonEncode({'phone': phoneToSend}),
-      ).timeout(const Duration(seconds: 5));
+        body: {'phone': phoneToSend},
+      ).timeout(const Duration(seconds: 8));
 
       try {
         final data = jsonDecode(response.body);
@@ -76,8 +78,11 @@ class ApiService {
       final response = await http.post(
         url,
         headers: _publicHeaders(),
-        body: jsonEncode({'phone': phoneToSend, 'otp': otp}),
-      ).timeout(const Duration(seconds: 5));
+        body: {
+          'phone': phoneToSend,
+          'otp': otp,
+        },
+      ).timeout(const Duration(seconds: 8));
 
       try {
         final data = jsonDecode(response.body);
@@ -105,7 +110,7 @@ class ApiService {
     }
   }
 
-  /// POST /auth/register
+  /// POST /register or /auth/register
   static Future<Map<String, dynamic>> registerUser({
     required String name,
     required String phone,
@@ -113,20 +118,24 @@ class ApiService {
     required String flat,
     required bool isOwner,
   }) async {
-    final url = Uri.parse('$baseUrl/auth/register');
+    final url = Uri.parse('$baseUrl/register');
     final phoneToSend = _cleanPhone(phone);
     try {
       final response = await http.post(
         url,
         headers: _headers(),
-        body: jsonEncode({
+        body: {
           'name': name,
+          'ownerName': name,
           'phone': phoneToSend,
           'society': society,
+          'shopName': society,
           'flat': flat,
-          'is_owner': isOwner,
-        }),
-      ).timeout(const Duration(seconds: 6));
+          'address': flat,
+          'is_owner': isOwner.toString(),
+          'userType': isOwner ? 'owner' : 'tenant',
+        },
+      ).timeout(const Duration(seconds: 8));
 
       final data = jsonDecode(response.body);
       return data as Map<String, dynamic>;
