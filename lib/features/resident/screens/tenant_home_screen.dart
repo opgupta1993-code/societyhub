@@ -49,38 +49,46 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Welcome',
-                        style: text.bodyMedium?.copyWith(
-                          color: AppColors.mute,
-                          fontSize: 15,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Welcome',
+                          style: text.bodyMedium?.copyWith(
+                            color: AppColors.mute,
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '$userName · $blockFlat',
-                        style: text.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.ink,
-                          fontSize: 22,
+                        const SizedBox(height: 2),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '$userName · $blockFlat',
+                            style: text.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.ink,
+                              fontSize: 22,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const RoleSwitcherChip(),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       // Notification Bell
                       InkWell(
                         onTap: () => context.push('/notifications'),
                         borderRadius: BorderRadius.circular(24),
                         child: Container(
-                          width: 44,
-                          height: 44,
+                          width: 42,
+                          height: 42,
                           decoration: const BoxDecoration(
                             color: AppColors.tint,
                             shape: BoxShape.circle,
@@ -88,18 +96,18 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                           child: const Icon(
                             Icons.notifications_active_rounded,
                             color: AppColors.amber,
-                            size: 22,
+                            size: 21,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       // Three Dots More Menu (•••)
                       InkWell(
                         onTap: () => _showMoreMenu(context),
                         borderRadius: BorderRadius.circular(24),
                         child: Container(
-                          width: 44,
-                          height: 44,
+                          width: 42,
+                          height: 42,
                           decoration: const BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
@@ -107,7 +115,7 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                           child: const Icon(
                             Icons.more_horiz_rounded,
                             color: AppColors.ink,
-                            size: 24,
+                            size: 22,
                           ),
                         ),
                       ),
@@ -439,19 +447,41 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
   }
 
   void _showMoreMenu(BuildContext context) {
+    final parentBottomInset = MediaQuery.viewPaddingOf(context).bottom;
+
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) {
+        final modalBottomInset = MediaQuery.viewPaddingOf(ctx).bottom;
+        final safeBottomPadding =
+            (parentBottomInset > modalBottomInset ? parentBottomInset : modalBottomInset) + 56.0;
+
         return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          top: false,
+          bottom: true,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(20, 16, 20, safeBottomPadding),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: AppColors.line,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -465,8 +495,10 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: const Icon(Icons.campaign_outlined, color: AppColors.primary),
                   title: const Text('Notices & Circulars', style: TextStyle(fontWeight: FontWeight.w700)),
                   trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
@@ -476,6 +508,8 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                   },
                 ),
                 ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: const Icon(Icons.how_to_vote_outlined, color: AppColors.primary),
                   title: const Text('Polls & Voting', style: TextStyle(fontWeight: FontWeight.w700)),
                   trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
@@ -485,6 +519,8 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                   },
                 ),
                 ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: const Icon(Icons.contacts_outlined, color: AppColors.primary),
                   title: const Text('Directory & Contacts', style: TextStyle(fontWeight: FontWeight.w700)),
                   trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
@@ -494,6 +530,8 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                   },
                 ),
                 ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: const Icon(Icons.people_outline_rounded, color: AppColors.primary),
                   title: const Text('Family Members & Vehicles', style: TextStyle(fontWeight: FontWeight.w700)),
                   trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
@@ -503,6 +541,8 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                   },
                 ),
                 ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: const Icon(Icons.support_agent_rounded, color: AppColors.primary),
                   title: const Text('Help & Support', style: TextStyle(fontWeight: FontWeight.w700)),
                   trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
@@ -513,6 +553,8 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                 ),
                 const Divider(),
                 ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: const Icon(Icons.language_rounded, color: AppColors.primary),
                   title: const Text('Language / भाषा', style: TextStyle(fontWeight: FontWeight.w700)),
                   onTap: () {
@@ -520,13 +562,34 @@ class _TenantHomeScreenState extends ConsumerState<TenantHomeScreen> {
                     showLanguageSelectionSheet(context, ref);
                   },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.logout_rounded, color: Colors.red),
-                  title: const Text('Log Out', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.red)),
+                const SizedBox(height: 8),
+                InkWell(
+                  borderRadius: BorderRadius.circular(16),
                   onTap: () {
                     Navigator.pop(ctx);
                     showLogoutConfirmationDialog(context, ref);
                   },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF2F2),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.logout_rounded, color: Colors.red, size: 22),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Log Out',
+                            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: Colors.red),
+                          ),
+                        ),
+                        Icon(Icons.chevron_right_rounded, color: Colors.red),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),

@@ -48,38 +48,48 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        societyName,
-                        style: text.bodyMedium?.copyWith(
-                          color: AppColors.mute,
-                          fontSize: 15,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          societyName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: text.bodyMedium?.copyWith(
+                            color: AppColors.mute,
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        roleTitle,
-                        style: text.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.ink,
-                          fontSize: 30,
+                        const SizedBox(height: 2),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            roleTitle,
+                            style: text.headlineMedium?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.ink,
+                              fontSize: 26,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 8),
 
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const RoleSwitcherChip(),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       // Notification Bell Badge (Light Amber background)
                       GestureDetector(
                         onTap: () => context.push('/notifications'),
                         child: Container(
-                          width: 44,
-                          height: 44,
+                          width: 42,
+                          height: 42,
                           decoration: const BoxDecoration(
                             color: Color(0xFFFEF3C7), // Light amber/gold container
                             shape: BoxShape.circle,
@@ -87,17 +97,17 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
                           child: const Icon(
                             Icons.notifications_rounded,
                             color: Color(0xFFD97706), // Gold bell icon
-                            size: 22,
+                            size: 21,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       // Three Dots More Menu (•••)
                       GestureDetector(
                         onTap: () => _showAdminMoreMenu(context),
                         child: Container(
-                          width: 44,
-                          height: 44,
+                          width: 42,
+                          height: 42,
                           decoration: const BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
@@ -105,7 +115,7 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
                           child: const Icon(
                             Icons.more_horiz_rounded,
                             color: AppColors.ink,
-                            size: 24,
+                            size: 22,
                           ),
                         ),
                       ),
@@ -421,19 +431,41 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
   }
 
   void _showAdminMoreMenu(BuildContext context) {
+    final parentBottomInset = MediaQuery.viewPaddingOf(context).bottom;
+
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) {
+        final modalBottomInset = MediaQuery.viewPaddingOf(ctx).bottom;
+        final safeBottomPadding =
+            (parentBottomInset > modalBottomInset ? parentBottomInset : modalBottomInset) + 56.0;
+
         return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          top: false,
+          bottom: true,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(20, 16, 20, safeBottomPadding),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: AppColors.line,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -447,8 +479,10 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: const Icon(Icons.security_rounded, color: AppColors.primary),
                   title: const Text('Roles & Permissions (D5)', style: TextStyle(fontWeight: FontWeight.w700)),
                   trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
@@ -458,6 +492,8 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
                   },
                 ),
                 ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: const Icon(Icons.history_edu_rounded, color: AppColors.primary),
                   title: const Text('Audit Log (D7)', style: TextStyle(fontWeight: FontWeight.w700)),
                   trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
@@ -467,6 +503,8 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
                   },
                 ),
                 ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: const Icon(Icons.settings_suggest_rounded, color: AppColors.primary),
                   title: const Text('Society Settings (D6)', style: TextStyle(fontWeight: FontWeight.w700)),
                   trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
@@ -477,6 +515,8 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
                 ),
                 const Divider(),
                 ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: const Icon(Icons.language_rounded, color: AppColors.primary),
                   title: const Text('Language / भाषा', style: TextStyle(fontWeight: FontWeight.w700)),
                   onTap: () {
@@ -484,13 +524,34 @@ class _AdminOwnerHomeScreenState extends ConsumerState<AdminOwnerHomeScreen> {
                     showLanguageSelectionSheet(context, ref);
                   },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.logout_rounded, color: Colors.red),
-                  title: const Text('Log Out', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.red)),
+                const SizedBox(height: 8),
+                InkWell(
+                  borderRadius: BorderRadius.circular(16),
                   onTap: () {
                     Navigator.pop(ctx);
                     showLogoutConfirmationDialog(context, ref);
                   },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF2F2),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.logout_rounded, color: Colors.red, size: 22),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Log Out',
+                            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: Colors.red),
+                          ),
+                        ),
+                        Icon(Icons.chevron_right_rounded, color: Colors.red),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),

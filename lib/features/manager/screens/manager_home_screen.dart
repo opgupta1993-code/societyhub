@@ -38,39 +38,63 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
     final user = ref.read(authProvider).user;
     final societyName = user?.societyName ?? 'Demo Housing Society';
     final userName = user?.name ?? 'Estate Manager';
+    final parentBottomInset = MediaQuery.viewPaddingOf(context).bottom;
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) {
+        final modalBottomInset = MediaQuery.viewPaddingOf(ctx).bottom;
+        final safeBottomPadding =
+            (parentBottomInset > modalBottomInset ? parentBottomInset : modalBottomInset) + 56.0;
+
         return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          top: false,
+          bottom: true,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(20, 16, 20, safeBottomPadding),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Drag Handle
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: AppColors.line,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          userName,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 18,
-                            color: AppColors.ink,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            userName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 18,
+                              color: AppColors.ink,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Estate Manager · $societyName',
-                          style: const TextStyle(fontSize: 12, color: AppColors.mute),
-                        ),
-                      ],
+                          Text(
+                            'Estate Manager · $societyName',
+                            style: const TextStyle(fontSize: 12, color: AppColors.mute),
+                          ),
+                        ],
+                      ),
                     ),
                     IconButton(
                       icon: const Icon(Icons.close_rounded),
@@ -78,12 +102,13 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
                 const Divider(height: 1, color: AppColors.line),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
 
                 ListTile(
                   contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -93,7 +118,7 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
                     child: const Icon(Icons.translate_rounded, color: AppColors.primary, size: 22),
                   ),
                   title: const Text('Change Language / भाषा', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-                  subtitle: const Text('English, हिन्दी, தமிழ், తెలుగు...', style: TextStyle(fontSize: 12, color: AppColors.mute)),
+                  subtitle: const Text('English, हिन्दी, मराठी, ગુજરાતી', style: TextStyle(fontSize: 12, color: AppColors.mute)),
                   trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.mute),
                   onTap: () {
                     Navigator.pop(ctx);
@@ -103,6 +128,7 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
 
                 ListTile(
                   contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -122,6 +148,7 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
 
                 ListTile(
                   contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -141,6 +168,7 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
 
                 ListTile(
                   contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -154,30 +182,64 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
                   trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.mute),
                   onTap: () {
                     Navigator.pop(ctx);
-                    context.push('/help-support');
+                    context.push('/help');
                   },
                 ),
 
-                const Divider(height: 16, color: AppColors.line),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Divider(height: 1, color: AppColors.line),
+                ),
 
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.red.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.logout_rounded, color: Colors.red, size: 22),
-                  ),
-                  title: const Text('Log Out', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.red)),
-                  subtitle: const Text('Sign out of your manager account', style: TextStyle(fontSize: 12, color: AppColors.mute)),
+                // Prominent Raised Log Out Card (Well above Android navigation buttons)
+                InkWell(
+                  borderRadius: BorderRadius.circular(16),
                   onTap: () {
                     Navigator.pop(ctx);
                     showLogoutConfirmationDialog(context, ref);
                   },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF2F2),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.logout_rounded, color: Colors.red, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Log Out',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 15,
+                                  color: Colors.red,
+                                ),
+                              ),
+                              Text(
+                                'Sign out of your manager account',
+                                style: TextStyle(fontSize: 12, color: AppColors.mute),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right_rounded, color: Colors.red),
+                      ],
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 10),
               ],
             ),
           ),
@@ -204,43 +266,53 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top Header Row (Matches Wireframe Header)
+                // Top Header Row (Responsive - No Right Overflow on any screen)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          societyName,
-                          style: text.bodyMedium?.copyWith(
-                            color: AppColors.mute,
-                            fontSize: 15,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            societyName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: text.bodyMedium?.copyWith(
+                              color: AppColors.mute,
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Estate Manager',
-                          style: text.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.ink,
-                            fontSize: 30,
+                          const SizedBox(height: 2),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Estate Manager',
+                              style: text.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.ink,
+                                fontSize: 26,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
+                    const SizedBox(width: 8),
 
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         const RoleSwitcherChip(),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                         // Amber Notification Bell Badge
                         GestureDetector(
                           onTap: () => context.push('/notifications'),
                           child: Container(
-                            width: 44,
-                            height: 44,
+                            width: 42,
+                            height: 42,
                             decoration: const BoxDecoration(
                               color: Color(0xFFFEF3C7), // Light amber/gold container
                               shape: BoxShape.circle,
@@ -248,17 +320,17 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
                             child: const Icon(
                               Icons.notifications_rounded,
                               color: Color(0xFFD97706), // Gold bell icon
-                              size: 22,
+                              size: 21,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                         // Three Dots More Menu (•••)
                         GestureDetector(
                           onTap: () => _showManagerMoreMenu(context),
                           child: Container(
-                            width: 44,
-                            height: 44,
+                            width: 42,
+                            height: 42,
                             decoration: const BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
@@ -266,7 +338,7 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
                             child: const Icon(
                               Icons.more_horiz_rounded,
                               color: AppColors.ink,
-                              size: 24,
+                              size: 22,
                             ),
                           ),
                         ),
@@ -349,14 +421,17 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            '2 Urgent · 13 Resolved this week',
-                            style: text.bodyMedium?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.9),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
+                          Flexible(
+                            child: Text(
+                              '2 Urgent · 13 Resolved this week',
+                              style: text.bodyMedium?.copyWith(
+                                color: Colors.white.withValues(alpha: 0.9),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
+                          const SizedBox(width: 8),
                           InkWell(
                             onTap: () => context.push('/manager-complaints'),
                             borderRadius: BorderRadius.circular(20),
@@ -689,65 +764,68 @@ class _ManagerHomeScreenState extends ConsumerState<ManagerHomeScreen> {
       ),
 
       // Bottom Navigation Bar (5 Items: Home, Issues, Bookings, Notices, More)
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            top: BorderSide(
-              color: AppColors.line.withValues(alpha: 0.6),
-              width: 1,
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border(
+              top: BorderSide(
+                color: AppColors.line.withValues(alpha: 0.6),
+                width: 1,
+              ),
             ),
           ),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _bottomNavIndex,
-          selectedItemColor: AppColors.primary,
-          unselectedItemColor: AppColors.mute,
-          backgroundColor: Colors.white,
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11),
-          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 11),
-          onTap: (index) {
-            if (index == 0) {
-              setState(() => _bottomNavIndex = 0);
-            } else if (index == 1) {
-              context.push('/manager-complaints');
-            } else if (index == 2) {
-              context.push('/manager-approvals');
-            } else if (index == 3) {
-              context.push('/manager-create-notice');
-            } else if (index == 4) {
-              _showManagerMoreMenu(context);
-            }
-          },
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home_rounded),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.build_outlined),
-              activeIcon: Icon(Icons.build_rounded),
-              label: 'Issues',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.event_available_outlined),
-              activeIcon: Icon(Icons.event_available_rounded),
-              label: 'Bookings',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.campaign_outlined),
-              activeIcon: Icon(Icons.campaign_rounded),
-              label: 'Notices',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.more_horiz_rounded),
-              activeIcon: Icon(Icons.more_horiz_rounded),
-              label: 'More',
-            ),
-          ],
+          child: BottomNavigationBar(
+            currentIndex: _bottomNavIndex,
+            selectedItemColor: AppColors.primary,
+            unselectedItemColor: AppColors.mute,
+            backgroundColor: Colors.white,
+            elevation: 0,
+            type: BottomNavigationBarType.fixed,
+            selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11),
+            unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 11),
+            onTap: (index) {
+              if (index == 0) {
+                setState(() => _bottomNavIndex = 0);
+              } else if (index == 1) {
+                context.push('/manager-complaints');
+              } else if (index == 2) {
+                context.push('/manager-approvals');
+              } else if (index == 3) {
+                context.push('/manager-create-notice');
+              } else if (index == 4) {
+                _showManagerMoreMenu(context);
+              }
+            },
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home_rounded),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.build_outlined),
+                activeIcon: Icon(Icons.build_rounded),
+                label: 'Issues',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.event_available_outlined),
+                activeIcon: Icon(Icons.event_available_rounded),
+                label: 'Bookings',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.campaign_outlined),
+                activeIcon: Icon(Icons.campaign_rounded),
+                label: 'Notices',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.more_horiz_rounded),
+                activeIcon: Icon(Icons.more_horiz_rounded),
+                label: 'More',
+              ),
+            ],
+          ),
         ),
       ),
     );

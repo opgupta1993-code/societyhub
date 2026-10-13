@@ -119,7 +119,12 @@ class _SocietySettingsScreenState extends ConsumerState<SocietySettingsScreen> {
                 color: const Color(0xFF0F5C4D),
                 onRefresh: _handleRefresh,
                 child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                  padding: EdgeInsets.fromLTRB(
+                    20,
+                    4,
+                    20,
+                    MediaQuery.viewPaddingOf(context).bottom + 48,
+                  ),
                   itemCount: optionsList.length,
                   separatorBuilder: (context, index) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
@@ -134,17 +139,19 @@ class _SocietySettingsScreenState extends ConsumerState<SocietySettingsScreen> {
       ),
 
       // Bottom Navigation Bar (Home, HR, Billing, Reports, More) with 'More' active
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            top: BorderSide(
-              color: AppColors.line.withValues(alpha: 0.6),
-              width: 1,
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border(
+              top: BorderSide(
+                color: AppColors.line.withValues(alpha: 0.6),
+                width: 1,
+              ),
             ),
           ),
-        ),
-        child: BottomNavigationBar(
+          child: BottomNavigationBar(
           currentIndex: 4, // 'More' active tab
           selectedItemColor: const Color(0xFF0F5C4D),
           unselectedItemColor: AppColors.mute,
@@ -194,6 +201,7 @@ class _SocietySettingsScreenState extends ConsumerState<SocietySettingsScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/models/role_enum.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../shared/widgets/logout_dialog.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -17,19 +18,31 @@ class ProfileScreen extends ConsumerWidget {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    final bottomSafePadding = MediaQuery.viewPaddingOf(context).bottom + 64.0;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Profile & Settings (A5)'),
+        title: const Text('My Profile & Settings'),
+        actions: [
+          IconButton(
+            tooltip: 'Log Out',
+            icon: const Icon(Icons.logout_rounded, color: AppColors.error),
+            onPressed: () => showLogoutConfirmationDialog(context, ref),
+          ),
+        ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await Future.delayed(const Duration(milliseconds: 600));
-        },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await Future.delayed(const Duration(milliseconds: 600));
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(20, 20, 20, bottomSafePadding),
+            child: Column(
+              children: [
             // User Avatar & Info Header
             Center(
               child: Column(
@@ -175,17 +188,15 @@ class ProfileScreen extends ConsumerWidget {
               ),
               icon: const Icon(Icons.logout_rounded),
               label: const Text('Logout from Account'),
-              onPressed: () {
-                ref.read(authProvider.notifier).logout();
-                context.go('/login');
-              },
+              onPressed: () => showLogoutConfirmationDialog(context, ref),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
           ],
         ),
       ),
     ),
-    );
+  ),
+);
   }
 
   Widget _sectionHeader(BuildContext context, String title) {

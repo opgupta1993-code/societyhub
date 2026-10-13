@@ -6,16 +6,21 @@ import '../../core/models/role_enum.dart';
 import '../../core/providers/auth_provider.dart';
 
 class RoleSwitcherModal extends ConsumerWidget {
-  const RoleSwitcherModal({super.key});
+  final double parentBottomInset;
+
+  const RoleSwitcherModal({super.key, this.parentBottomInset = 0});
 
   static void show(BuildContext context) {
+    final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       backgroundColor: Colors.white,
-      builder: (context) => const RoleSwitcherModal(),
+      builder: (context) => RoleSwitcherModal(parentBottomInset: bottomInset),
     );
   }
 
@@ -29,13 +34,19 @@ class RoleSwitcherModal extends ConsumerWidget {
 
     final activeRole = user.activeRole;
     final availableRoles = user.availableRoles;
+    final modalBottom = MediaQuery.viewPaddingOf(context).bottom;
+    final safeBottomPadding =
+        (parentBottomInset > modalBottom ? parentBottomInset : modalBottom) + 48.0;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return SafeArea(
+      top: false,
+      bottom: true,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(20, 16, 20, safeBottomPadding),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           // Drag handle bar
           Center(
             child: Container(
@@ -183,6 +194,7 @@ class RoleSwitcherModal extends ConsumerWidget {
           ),
         ],
       ),
+    ),
     );
   }
 

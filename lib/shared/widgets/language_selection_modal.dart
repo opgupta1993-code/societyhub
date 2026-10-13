@@ -6,82 +6,95 @@ import '../../core/localization/app_localizations.dart';
 
 /// Modal Bottom Sheet for Language Selection (English, Hindi, Marathi, Gujarati)
 void showLanguageSelectionSheet(BuildContext context, WidgetRef ref) {
+  final parentBottomInset = MediaQuery.viewPaddingOf(context).bottom;
+
   showModalBottomSheet(
     context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
     backgroundColor: Colors.white,
     builder: (modalContext) {
+      final modalBottomInset = MediaQuery.viewPaddingOf(modalContext).bottom;
+      final safeBottomPadding =
+          (parentBottomInset > modalBottomInset ? parentBottomInset : modalBottomInset) + 48.0;
+
       return Consumer(
         builder: (context, ref, _) {
           final activeLocale = ref.watch(localeProvider);
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Select Language / भाषा चुनें',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.ink,
-                            fontSize: 20,
-                          ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close_rounded, color: AppColors.mute),
-                      onPressed: () => Navigator.pop(modalContext),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                _buildLanguageItem(
-                  context,
-                  ref,
-                  modalContext,
-                  label: 'English',
-                  subLabel: 'Default',
-                  code: 'en',
-                  activeCode: activeLocale.languageCode,
-                ),
-                const SizedBox(height: 8),
-                _buildLanguageItem(
-                  context,
-                  ref,
-                  modalContext,
-                  label: 'हिंदी (Hindi)',
-                  subLabel: 'हिन्दी भाषा',
-                  code: 'hi',
-                  activeCode: activeLocale.languageCode,
-                ),
-                const SizedBox(height: 8),
-                _buildLanguageItem(
-                  context,
-                  ref,
-                  modalContext,
-                  label: 'मराठी (Marathi)',
-                  subLabel: 'मराठी भाषा',
-                  code: 'mr',
-                  activeCode: activeLocale.languageCode,
-                ),
-                const SizedBox(height: 8),
-                _buildLanguageItem(
-                  context,
-                  ref,
-                  modalContext,
-                  label: 'ગુજરાતી (Gujarati)',
-                  subLabel: 'ગુજરાતી ભાષા',
-                  code: 'gu',
-                  activeCode: activeLocale.languageCode,
-                ),
-                const SizedBox(height: 16),
-              ],
+          return SafeArea(
+            top: false,
+            bottom: true,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(20, 20, 20, safeBottomPadding),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Select Language / भाषा चुनें',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.ink,
+                                fontSize: 20,
+                              ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close_rounded, color: AppColors.mute),
+                        onPressed: () => Navigator.pop(modalContext),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildLanguageItem(
+                    context,
+                    ref,
+                    modalContext,
+                    label: 'English',
+                    subLabel: 'Default',
+                    code: 'en',
+                    activeCode: activeLocale.languageCode,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildLanguageItem(
+                    context,
+                    ref,
+                    modalContext,
+                    label: 'हिंदी (Hindi)',
+                    subLabel: 'हिन्दी भाषा',
+                    code: 'hi',
+                    activeCode: activeLocale.languageCode,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildLanguageItem(
+                    context,
+                    ref,
+                    modalContext,
+                    label: 'मराठी (Marathi)',
+                    subLabel: 'मराठी भाषा',
+                    code: 'mr',
+                    activeCode: activeLocale.languageCode,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildLanguageItem(
+                    context,
+                    ref,
+                    modalContext,
+                    label: 'ગુજરાતી (Gujarati)',
+                    subLabel: 'ગુજરાતી ભાષા',
+                    code: 'gu',
+                    activeCode: activeLocale.languageCode,
+                  ),
+                ],
+              ),
             ),
           );
         },
