@@ -90,9 +90,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final authState = ref.watch(authProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.bg,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: AppColors.bg,
         elevation: 0,
         actions: [
           Padding(
@@ -264,7 +264,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     height: 24,
                     child: Checkbox(
                       value: _agreedToTerms,
-                      activeColor: const Color(0xFF0062E0),
+                      activeColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),
                       ),
@@ -301,8 +301,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 height: 52,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0062E0),
-                    disabledBackgroundColor: const Color(0xFF0062E0),
+                    backgroundColor: AppColors.primary,
+                    disabledBackgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     disabledForegroundColor: Colors.white,
                     elevation: 0,
@@ -358,7 +358,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         TextSpan(
                           text: 'Log in',
                           style: TextStyle(
-                            color: Color(0xFF0062E0),
+                            color: AppColors.primary,
                             fontWeight: FontWeight.w700,
                           ),
                         ),

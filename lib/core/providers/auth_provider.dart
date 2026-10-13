@@ -205,23 +205,31 @@ class AuthNotifier extends Notifier<AuthState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
 
-    final fullFlat = 'Tower $tower - $flat';
+    final fullFlat = (tower.isNotEmpty) ? 'Tower $tower - $flat' : flat;
     final res = await ApiService.registerUser(
       name: name,
       phone: phone,
+      email: email,
       society: society,
-      flat: fullFlat,
+      tower: tower,
+      flat: flat,
       isOwner: isOwner,
     );
 
+    final userData = res['user'] as Map<String, dynamic>?;
+    final rawRoleId = userData?['role_id'] ?? (isOwner ? 1 : 3);
+    final rawRole = userData?['role']?.toString() ?? (isOwner ? 'owner' : 'resident');
+    final activeRole = UserRole.fromRoleId(rawRoleId, rawRole);
+
     final newUser = UserModel(
-      id: res['user']?['uid'] ?? 'usr_${DateTime.now().millisecondsSinceEpoch}',
-      name: name,
-      phone: phone,
-      societyName: society,
-      blockFlat: fullFlat,
+      id: userData?['uid'] ?? 'usr_${DateTime.now().millisecondsSinceEpoch}',
+      name: userData?['name'] ?? name,
+      phone: userData?['phone'] ?? phone,
+      societyName: userData?['society'] ?? society,
+      blockFlat: userData?['block_flat'] ?? fullFlat,
+      roleId: activeRole.roleId,
       isOwner: isOwner,
-      activeRole: UserRole.resident,
+      activeRole: activeRole,
       availableRoles: UserRole.values.toList(),
     );
 
